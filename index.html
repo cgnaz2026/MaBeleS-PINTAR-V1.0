@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE_KEY"></script>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MaBeleS PINTAR - Modul Bacaan Interaktif</title>
     <!-- Google Fonts: Andika & Fredoka -->
@@ -1309,9 +1308,7 @@ header {
             isSpeakingState = true;
             if (buttonEl) setSpeakerPlaying(buttonEl);
 
-            // Buka kunci Audio semasa pemicu klik
-            globalAudioPlayer.play().catch(() => {});
-
+            // Mainkan audio hanya selepas URL TTS ditetapkan dalam speakSentenceQueue()
             speakSentenceQueue(sentences, rate, pitch);
         }
 
