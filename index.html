@@ -872,11 +872,12 @@
     let isMusicPlaying = false;
     let audioCtx = null;
     let musicInterval = null;
-    
-    // Global speech queue variables to prevent TTS cutoff on long texts
+    let isAudioUnlocked = false;
+
+    // Speech Queue
     let speechQueue = [];
     let currentQueueIndex = 0;
-    let currentUtterance = null;
+    window.currentUtterance = null; // Stored globally to prevent browser Garbage Collection on server
 
     const svgMeja = `<svg width="54" height="54" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="56" height="10" rx="2" fill="#8D6E63" stroke="#4E342E" stroke-width="2"/><rect x="10" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="48" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="20" y="30" width="5" height="18" fill="#5D4037"/><rect x="39" y="30" width="5" height="18" fill="#5D4037"/></svg>`;
 
@@ -960,7 +961,6 @@
         { text: 'Saya suka main bola.', translation: 'I like playing ball.', emoji: '🏃' }
     ];
 
-    /* Petikan Pemahaman 1 & 2 */
     const listPemahaman = [
         {
             title: 'Petikan Pemahaman 1: Ikan Comel',
@@ -984,17 +984,32 @@
         }
     ];
 
-    /* Strict Voice Filter for Malay Language - Explicitly Rejecting Indonesian (id-ID) */
+    /* Automatic Server Audio Unlocker */
+    function unlockAudioEngine() {
+        if (!isAudioUnlocked) {
+            initAudioContext();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.resume();
+                // Play dummy silent utterance to unlock TTS on iOS & Chrome Pages
+                let dummy = new SpeechSynthesisUtterance('');
+                dummy.volume = 0;
+                window.speechSynthesis.speak(dummy);
+            }
+            isAudioUnlocked = true;
+        }
+    }
+    document.addEventListener('click', unlockAudioEngine);
+    document.addEventListener('touchstart', unlockAudioEngine);
+
+    /* Strict Voice Filter - Rejecting Indonesian (id-ID) */
     function getMalayVoice() {
         if (!('speechSynthesis' in window)) return null;
         const voices = window.speechSynthesis.getVoices();
         if (!voices || voices.length === 0) return null;
 
-        // 1. Exact match for Malay ms-MY or ms_MY
         let voice = voices.find(v => (v.lang === 'ms-MY' || v.lang === 'ms_MY') && !v.lang.toLowerCase().includes('id'));
         if (voice) return voice;
 
-        // 2. Any voice tag starting with 'ms' or 'zlm' and NOT containing Indonesian code
         voice = voices.find(v => {
             const l = v.lang.toLowerCase();
             const n = v.name.toLowerCase();
@@ -1002,7 +1017,6 @@
         });
         if (voice) return voice;
 
-        // 3. Match voice name strictly containing Malay / Melayu, NOT Indonesia
         voice = voices.find(v => {
             const n = v.name.toLowerCase();
             return (n.includes('malay') || n.includes('melayu')) && !n.includes('indonesia') && !n.includes('indonesian');
@@ -1012,33 +1026,41 @@
         return null;
     }
 
+    // Preload voices
     if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
         window.speechSynthesis.onvoiceschanged = () => {
             window.speechSynthesis.getVoices();
         };
     }
 
-    /* Fixed Speech Synthesizer with Sentence Queueing */
+    /* Fixed Speech Synthesizer for GitHub Pages */
     function speakText(text) {
         if (!('speechSynthesis' in window)) return;
 
-        window.speechSynthesis.cancel(); // Stop any ongoing speech
+        unlockAudioEngine();
+        
+        // Unfreeze engine if paused
+        window.speechSynthesis.resume();
+        window.speechSynthesis.cancel();
 
         if (!text) return;
 
         const cleanText = text.replace(/['"\\]/g, ' ');
-        // Split passage into sentences so TTS never cuts off mid-paragraph
         const sentences = cleanText.match(/[^.!?]+[.!?]+/g) || [cleanText];
 
         speechQueue = sentences;
         currentQueueIndex = 0;
 
-        playNextInQueue();
+        // Slight timeout to prevent Chrome web-server speech synthesis freeze
+        setTimeout(() => {
+            playNextInQueue();
+        }, 50);
     }
 
     function playNextInQueue() {
         if (currentQueueIndex >= speechQueue.length) {
-            currentUtterance = null;
+            window.currentUtterance = null;
             return;
         }
 
@@ -1049,34 +1071,37 @@
             return;
         }
 
-        currentUtterance = new SpeechSynthesisUtterance(sentenceText);
+        window.speechSynthesis.resume();
+
+        const utterance = new SpeechSynthesisUtterance(sentenceText);
         
         const malayVoice = getMalayVoice();
         if (malayVoice) {
-            currentUtterance.voice = malayVoice;
-            currentUtterance.lang = malayVoice.lang;
+            utterance.voice = malayVoice;
+            utterance.lang = malayVoice.lang;
         } else {
-            // Force ms-MY tag strictly without assigning any default Indonesian voice object
-            currentUtterance.lang = 'ms-MY';
+            utterance.lang = 'ms-MY';
         }
 
-        currentUtterance.rate = 0.85;
-        currentUtterance.pitch = 1.0;
+        utterance.rate = 0.85;
+        utterance.pitch = 1.0;
 
-        currentUtterance.onend = () => {
+        utterance.onend = () => {
             currentQueueIndex++;
             playNextInQueue();
         };
 
-        currentUtterance.onerror = () => {
+        utterance.onerror = (e) => {
+            console.warn('TTS Error or Interrupted:', e);
             currentQueueIndex++;
             playNextInQueue();
         };
 
-        window.speechSynthesis.speak(currentUtterance);
+        window.currentUtterance = utterance; // Prevent GC
+        window.speechSynthesis.speak(utterance);
     }
 
-    /* Sound Synthesizer (Web Audio API) */
+    /* Web Audio API for Effects */
     function initAudioContext() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1117,9 +1142,8 @@
         }
     }
 
-    /* Background Music Generator */
     function toggleBackgroundMusic() {
-        initAudioContext();
+        unlockAudioEngine();
         const btn = document.getElementById('musicToggle');
         const visualizer = document.getElementById('musicVisualizer');
 
@@ -1157,7 +1181,7 @@
         }, 500);
     }
 
-    /* Core Navigation Router */
+    /* Router Navigation */
     function switchSkill(skillNum) {
         currentSkill = skillNum;
         document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1180,7 +1204,6 @@
         }
     }
 
-    /* Skill 1: Abjad */
     function renderSkill1() {
         const main = document.getElementById('mainContent');
         let html = `
@@ -1215,7 +1238,6 @@
         main.innerHTML = html;
     }
 
-    /* Skill 2: Suku Kata KV */
     function renderSkill2() {
         const main = document.getElementById('mainContent');
         let html = `
@@ -1239,22 +1261,12 @@
         main.innerHTML = html;
     }
 
-    /* Skill 3: Suku Kata Terbuka */
     function renderSkill3() { renderWordListModule('📖', 'Modul 3: Perkataan Suku Kata Terbuka', listSKTerbuka); }
-
-    /* Skill 4: Suku Kata KVK */
     function renderSkill4() { renderWordListModule('📦', 'Modul 4: Suku Kata KVK', listKVK); }
-
-    /* Skill 5: Suku Kata KVKK */
     function renderSkill5() { renderWordListModule('🔔', 'Modul 5: Suku Kata KVKK', listKVKK); }
-
-    /* Skill 6: Diftong & Vokal Berganding */
     function renderSkill6() { renderWordListModule('🍇', 'Modul 6: Diftong & Vokal Berganding', listDiftong); }
-
-    /* Skill 7: Digraf & Konsonan Bergabung */
     function renderSkill7() { renderWordListModule('🎺', 'Modul 7: Digraf & Konsonan Bergabung', listDigraf); }
 
-    /* Skill 8: Ayat Mudah */
     function renderSkill8() {
         const main = document.getElementById('mainContent');
         let html = `
@@ -1283,7 +1295,6 @@
         if (listAyat[idx]) speakText(listAyat[idx].text);
     }
 
-    /* Skill 9: Pemahaman (Petikan Pemahaman 1 & Petikan Pemahaman 2) */
     function renderSkill9() {
         const main = document.getElementById('mainContent');
 
@@ -1333,7 +1344,6 @@
         }
     }
 
-    /* Reusable Helper for Word Lists */
     function renderWordListModule(icon, title, dataset) {
         const main = document.getElementById('mainContent');
         let html = `
@@ -1363,7 +1373,6 @@
         main.innerHTML = html;
     }
 
-    /* Interactivity & UI Feedback */
     function checkAnswer(btn, isCorrect) {
         if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
 
@@ -1434,7 +1443,6 @@
         triggerConfetti();
     }
 
-    /* Particle Canvas FX */
     function triggerConfetti() {
         const canvas = document.getElementById('confettiCanvas');
         const ctx = canvas.getContext('2d');
