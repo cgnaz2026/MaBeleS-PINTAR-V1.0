@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400&family=Fredoka:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #FF5722;
@@ -80,25 +81,6 @@
             z-index: 1;
         }
 
-        .animated-cloud-1 { animation: floatCloud1 22s infinite linear; }
-        .animated-cloud-2 { animation: floatCloud2 30s infinite linear; }
-        .twinkle-star { animation: starPulse 2s infinite ease-in-out alternate; }
-
-        @keyframes floatCloud1 {
-            0% { transform: translateX(-150px); }
-            100% { transform: translateX(1200px); }
-        }
-
-        @keyframes floatCloud2 {
-            0% { transform: translateX(1200px); }
-            100% { transform: translateX(-150px); }
-        }
-
-        @keyframes starPulse {
-            0% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
-            100% { opacity: 1; transform: scale(1.2) rotate(20deg); }
-        }
-
         .brand-container {
             display: flex;
             align-items: center;
@@ -124,20 +106,9 @@
             width: auto;
             max-width: 200px;
             filter: drop-shadow(3px 4px 0px rgba(0,0,0,0.3));
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             object-fit: contain;
-            animation: floatLogo 3.5s infinite ease-in-out;
             cursor: pointer;
-        }
-
-        .mabeles-logo-img:hover {
-            transform: scale(1.12) rotate(-3deg);
-            filter: drop-shadow(4px 6px 8px rgba(255, 235, 59, 0.8));
-        }
-
-        @keyframes floatLogo {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-5px) rotate(1deg); }
         }
 
         .badge-pintar {
@@ -147,12 +118,6 @@
             text-shadow: 3px 3px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000;
             letter-spacing: 2px;
             font-family: 'Fredoka', sans-serif;
-            animation: pulseText 2s infinite ease-in-out;
-        }
-
-        @keyframes pulseText {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .brand-tagline {
@@ -181,12 +146,6 @@
             position: relative;
             z-index: 2;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            animation: floatBadge 4s infinite ease-in-out 0.5s;
-        }
-
-        @keyframes floatBadge {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-4px); }
         }
 
         .teacher-badge {
@@ -200,12 +159,6 @@
             font-weight: bold;
             box-shadow: 0 3px 6px rgba(0,0,0,0.15);
             border: 2px solid #FFD54F;
-            transition: all 0.3s;
-        }
-
-        .teacher-badge:hover {
-            transform: scale(1.05);
-            border-color: #FF9800;
         }
 
         .teacher-avatar-img {
@@ -215,8 +168,6 @@
             object-fit: cover;
             border: 2.5px solid #E91E63;
             background: #FFF;
-            box-shadow: 0 0 10px rgba(233, 30, 99, 0.4);
-            transition: transform 0.3s;
         }
 
         .top-controls {
@@ -238,16 +189,11 @@
             color: #E65100;
             cursor: pointer;
             box-shadow: 0 4px 0 #F57F17;
-            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-        }
-
-        .music-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #F57F17;
+            transition: all 0.2s;
         }
 
         .music-btn.playing {
@@ -255,12 +201,6 @@
             border-color: #00C853;
             color: #004D40;
             box-shadow: 0 4px 0 #00796B;
-            animation: musicPulse 0.8s infinite alternate;
-        }
-
-        @keyframes musicPulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.08) rotate(1deg); }
         }
 
         .audio-bars {
@@ -298,35 +238,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            position: relative;
-            transition: transform 0.3s;
-        }
-
-        .score-board.bump {
-            animation: scoreBump 0.4s ease-out;
-        }
-
-        @keyframes scoreBump {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.25) rotate(-5deg); background: #FF9800; }
-            100% { transform: scale(1); }
-        }
-
-        .floating-score {
-            position: fixed;
-            color: #FFEB3B;
-            font-size: 2.2rem;
-            font-weight: 900;
-            text-shadow: 3px 3px 0 #000;
-            pointer-events: none;
-            z-index: 9999;
-            animation: floatUpScore 1.2s ease-out forwards;
-        }
-
-        @keyframes floatUpScore {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            50% { opacity: 1; transform: translateY(-40px) scale(1.3); }
-            100% { opacity: 0; transform: translateY(-80px) scale(1); }
         }
 
         .app-container {
@@ -369,34 +280,13 @@
             border-radius: 14px;
             text-align: left;
             font-size: 0.9rem;
-            line-height: 1.3;
             font-weight: 700;
             color: #33691E;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-btn span.nav-text {
-            flex: 1;
-            position: relative;
-            z-index: 2;
-        }
-
-        .nav-btn span:last-child {
-            font-size: 1.2rem;
-            transition: transform 0.3s;
-        }
-
-        .nav-btn:hover {
-            background: #DCEDC8;
-            transform: translateX(6px);
-            border-color: #81C784;
         }
 
         .nav-btn.active {
@@ -404,7 +294,6 @@
             color: white;
             border-color: #558B2F;
             box-shadow: 0 4px 0 #33691E;
-            transform: translateX(4px);
         }
 
         .content-area {
@@ -418,12 +307,6 @@
             flex-direction: column;
             overflow-y: auto;
             max-height: calc(100vh - 100px);
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .section-header {
@@ -435,7 +318,6 @@
             padding: 14px 22px;
             border-radius: 16px;
             border-left: 8px solid #1E88E5;
-            box-shadow: 0 4px 10px rgba(30, 136, 229, 0.15);
         }
 
         .section-title {
@@ -444,6 +326,36 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .sub-tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sub-tab {
+            background: #E0F2F1;
+            border: 2px solid #80CBC4;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #00695C;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .sub-tab:hover {
+            background: #B2DFDB;
+        }
+
+        .sub-tab.active {
+            background: #00897B;
+            color: white;
+            border-color: #004D40;
+            box-shadow: 0 4px 0 #004D40;
         }
 
         .cards-grid {
@@ -463,21 +375,12 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 6px 0 #FB8C00;
-            position: relative;
-            animation: cardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-        }
-
-        @keyframes cardPop {
-            0% { opacity: 0; transform: scale(0.6) translateY(20px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
+            transition: all 0.2s;
         }
 
         .card-item:hover {
-            transform: translateY(-6px) scale(1.06);
-            box-shadow: 0 10px 0 #FB8C00;
-            border-color: #FF9800;
+            transform: translateY(-4px);
         }
 
         .card-text {
@@ -499,19 +402,6 @@
             gap: 16px;
             margin-bottom: 14px;
             box-shadow: 0 5px 0 #FFB300;
-            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: slideInRight 0.35s ease-out both;
-        }
-
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .word-display-card:hover {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: 0 8px 0 #FFB300;
-            background: #FFF9C4;
         }
 
         .word-visual {
@@ -525,8 +415,6 @@
             font-size: 2.7rem;
             border: 2px solid #FFE082;
             flex-shrink: 0;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.06);
-            transition: transform 0.3s;
         }
 
         .word-details {
@@ -534,34 +422,37 @@
         }
 
         .word-syllables {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 0;
-            line-height: 1.4;
+            line-height: 1.5;
         }
+
+        /* Warna Suku Kata Bagi Modul 8 & 9 */
+        .syl-c1 { color: #1565C0; font-weight: bold; } /* Biru */
+        .syl-c2 { color: #D32F2F; font-weight: bold; } /* Merah */
+        .syl-c3 { color: #2E7D32; font-weight: bold; } /* Hijau */
+        .syl-c4 { color: #6A1B9A; font-weight: bold; } /* Ungu */
 
         .btn-speaker-only {
             background: #8E24AA;
             color: white;
             border: none;
-            width: 46px;
-            height: 46px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             cursor: pointer;
             box-shadow: 0 4px 0 #4A148C;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.2s;
             flex-shrink: 0;
-            position: relative;
         }
 
         .btn-speaker-only:hover {
             background: #AB47BC;
-            transform: scale(1.15) rotate(5deg);
+            transform: scale(1.1);
         }
 
         .modal-overlay {
@@ -573,7 +464,6 @@
             align-items: center;
             z-index: 2000;
             backdrop-filter: blur(6px);
-            animation: fadeInModal 0.25s ease-out;
         }
 
         .modal-overlay.active {
@@ -588,15 +478,8 @@
             text-align: center;
             position: relative;
             max-width: 90%;
-            width: 390px;
+            width: 380px;
             box-shadow: 0 16px 40px rgba(0,0,0,0.35);
-            animation: springModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes springModal {
-            0% { transform: scale(0.3) translateY(50px); opacity: 0; }
-            80% { transform: scale(1.05) translateY(-5px); }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         .close-modal-btn {
@@ -607,28 +490,14 @@
             font-weight: bold;
             color: #888;
             cursor: pointer;
-            line-height: 1;
-            transition: all 0.2s;
-        }
-
-        .close-modal-btn:hover {
-            color: #E53935;
-            transform: scale(1.2) rotate(90deg);
         }
 
         .modal-big-display {
-            font-size: 4.8rem;
+            font-size: 4rem;
             font-weight: 800;
             line-height: 1.1;
             margin: 15px 0;
             color: #1565C0;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
-            animation: floatDisplay 3s infinite ease-in-out;
-        }
-
-        @keyframes floatDisplay {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
         }
 
         .quiz-container {
@@ -639,43 +508,19 @@
             padding: 22px;
         }
 
-        .quiz-header-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #FF8F00, #FF6F00);
-            color: #FFF;
-            padding: 8px 22px;
-            border-radius: 25px;
-            font-weight: bold;
-            font-size: 1.25rem;
-            margin-bottom: 18px;
-            box-shadow: 0 4px 0 #E65100;
-        }
-
         .quiz-card {
             background: #FFF;
             border: 3px solid #FFD54F;
             border-radius: 18px;
             padding: 18px;
             margin-bottom: 16px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-            transition: transform 0.2s;
-        }
-
-        .quiz-card p {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #E65100;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
         }
 
         .options-container {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            margin-top: 10px;
         }
 
         .option-btn {
@@ -683,40 +528,14 @@
             border: 3px solid #4FC3F7;
             padding: 10px 22px;
             border-radius: 16px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 0 #0288D1;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .option-btn:hover {
-            background: #E0F7FA;
-            transform: translateY(-3px) scale(1.04);
-            box-shadow: 0 6px 0 #0288D1;
-        }
-
-        .option-btn.correct {
-            background: #C8E6C9 !important;
-            border-color: #4CAF50 !important;
-            box-shadow: 0 4px 0 #2E7D32 !important;
-            color: #1B5E20;
-            animation: correctBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .option-btn.wrong {
-            background: #FFCDD2 !important;
-            border-color: #F44336 !important;
-            box-shadow: 0 4px 0 #C62828 !important;
-            color: #B71C1C;
-            animation: shake 0.4s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
-        }
+        .option-btn.correct { background: #C8E6C9 !important; border-color: #4CAF50 !important; }
+        .option-btn.wrong { background: #FFCDD2 !important; border-color: #F44336 !important; }
 
         .passage-card-wrapper {
             background: #E8F5E9;
@@ -724,23 +543,12 @@
             border-radius: 20px;
             padding: 22px;
             margin-bottom: 30px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
         }
 
         .passage-box {
-            font-size: 1.3rem;
-            line-height: 2;
+            font-size: 1.25rem;
+            line-height: 2.1;
             margin-bottom: 22px;
-            position: relative;
-        }
-
-        .passage-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            border-bottom: 2px dashed #A5D6A7;
-            padding-bottom: 8px;
         }
 
         .toast {
@@ -755,9 +563,8 @@
             font-size: 1.25rem;
             font-weight: bold;
             opacity: 0;
-            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.35s;
             z-index: 3000;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
         }
 
         .toast.show {
@@ -770,13 +577,6 @@
             .sidebar { width: 100%; max-height: 220px; }
             .content-area { max-height: none; }
             header { flex-wrap: wrap; gap: 10px; }
-            .badge-pintar { font-size: 1.4rem; }
-            .teacher-stickers { padding: 2px 8px; }
-            .teacher-badge { font-size: 0.8rem; padding: 2px 8px 2px 4px; }
-            .mabeles-logo-img { height: 40px; }
-            .teacher-avatar-img { width: 34px; height: 34px; }
-            .brand-tagline { font-size: 0.68rem; }
-            .brand-tagline-sub { font-size: 0.65rem; }
         }
     </style>
 </head>
@@ -785,17 +585,6 @@
 <canvas id="confettiCanvas"></canvas>
 
 <header>
-    <svg class="header-bg-illustrations" viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <g class="animated-cloud-1">
-            <path d="M 50 40 Q 65 20 85 30 Q 100 10 120 25 Q 140 10 160 30 Q 175 20 185 40 Z" fill="#FFFFFF"/>
-        </g>
-        <g class="animated-cloud-2">
-            <path d="M 900 35 Q 915 15 935 25 Q 950 5 970 20 Q 990 5 1010 25 Q 1025 15 1035 35 Z" fill="#FFFFFF"/>
-        </g>
-        <polygon class="twinkle-star" points="300,15 305,25 316,26 308,34 310,45 300,39 290,45 292,34 284,26 295,25" fill="#FFE082"/>
-        <polygon class="twinkle-star" style="animation-delay: 1s;" points="750,20 754,28 763,29 756,35 758,44 744,35 737,29 746,28" fill="#FFE082"/>
-    </svg>
-
     <div class="brand-container">
         <div class="logo-group">
             <div class="logo-header-row">
@@ -813,12 +602,11 @@
         <div class="teacher-badge">
             <img class="teacher-avatar-img" src="121452.jpg" alt="Cikgu Naz & Cikgu Ju" onerror="this.onerror=null; this.parentElement.innerHTML='👩‍🏫 Cikgu Naz & Cikgu Ju';">
             <span>Cikgu Naz & Cikgu Ju</span>
-            <span style="font-size:1.1rem; color:#FF9800;">👍</span>
         </div>
     </div>
 
     <div class="top-controls">
-        <button class="music-btn" id="musicToggle" title="Buka/Tutup Muzik Ceria" onclick="toggleBackgroundMusic()">
+        <button class="music-btn" id="musicToggle" onclick="toggleBackgroundMusic()">
             <span id="musicBtnIcon">🎵</span> 
             <span id="musicBtnText">Muzik</span>
             <div id="musicVisualizer" class="audio-bars" style="display:none;">
@@ -828,8 +616,7 @@
             </div>
         </button>
         <div class="score-board" id="scoreBoard">
-            <span>⭐ Skor:</span>
-            <span id="totalScore">0</span>
+            <span>⭐ Skor:</span> <span id="totalScore">0</span>
         </div>
     </div>
 </header>
@@ -837,15 +624,15 @@
 <div class="app-container">
     <div class="sidebar">
         <h3>KEMAHIRAN BACAAN</h3>
-        <button class="nav-btn active" data-skill="1" onclick="switchSkill(1)"><span class="nav-text">Modul 1: Abjad</span> <span>🔤</span></button>
-        <button class="nav-btn" data-skill="2" onclick="switchSkill(2)"><span class="nav-text">Modul 2: Suku Kata KV</span> <span>🧩</span></button>
-        <button class="nav-btn" data-skill="3" onclick="switchSkill(3)"><span class="nav-text">Modul 3: Suku Kata Terbuka</span> <span>📖</span></button>
-        <button class="nav-btn" data-skill="4" onclick="switchSkill(4)"><span class="nav-text">Modul 4: Suku Kata KVK</span> <span>📦</span></button>
-        <button class="nav-btn" data-skill="5" onclick="switchSkill(5)"><span class="nav-text">Modul 5: Suku Kata KVKK</span> <span>🔔</span></button>
-        <button class="nav-btn" data-skill="6" onclick="switchSkill(6)"><span class="nav-text">Modul 6: Diftong & Vokal Berganding</span> <span>🍇</span></button>
-        <button class="nav-btn" data-skill="7" onclick="switchSkill(7)"><span class="nav-text">Modul 7: Digraf & Konsonan Bergabung</span> <span>🎺</span></button>
-        <button class="nav-btn" data-skill="8" onclick="switchSkill(8)"><span class="nav-text">Modul 8: Ayat Mudah</span> <span>📝</span></button>
-        <button class="nav-btn" data-skill="9" onclick="switchSkill(9)"><span class="nav-text">Modul 9: Pemahaman</span> <span>💡</span></button>
+        <button class="nav-btn active" data-skill="1" onclick="switchSkill(1)"><span>Modul 1: Abjad</span> <span>🔤</span></button>
+        <button class="nav-btn" data-skill="2" onclick="switchSkill(2)"><span>Modul 2: Suku Kata KV</span> <span>🧩</span></button>
+        <button class="nav-btn" data-skill="3" onclick="switchSkill(3)"><span>Modul 3: Suku Kata Terbuka</span> <span>📖</span></button>
+        <button class="nav-btn" data-skill="4" onclick="switchSkill(4)"><span>Modul 4: Suku Kata KVK</span> <span>📦</span></button>
+        <button class="nav-btn" data-skill="5" onclick="switchSkill(5)"><span>Modul 5: Suku Kata KVKK</span> <span>🔔</span></button>
+        <button class="nav-btn" data-skill="6" onclick="switchSkill(6)"><span>Modul 6: Diftong & Vokal</span> <span>🍇</span></button>
+        <button class="nav-btn" data-skill="7" onclick="switchSkill(7)"><span>Modul 7: Digraf & Konsonan</span> <span>🎺</span></button>
+        <button class="nav-btn" data-skill="8" onclick="switchSkill(8)"><span>Modul 8: Ayat Mudah</span> <span>📝</span></button>
+        <button class="nav-btn" data-skill="9" onclick="switchSkill(9)"><span>Modul 9: Pemahaman</span> <span>💡</span></button>
     </div>
 
     <div class="content-area" id="mainContent"></div>
@@ -854,37 +641,38 @@
 <div id="cardModal" class="modal-overlay" onclick="closeCardModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
         <span class="close-modal-btn" onclick="closeCardModalDirect()">×</span>
-        <div id="modalEmoji" style="font-size: 3.8rem; display: flex; justify-content: center; align-items: center;"></div>
+        <div id="modalEmoji" style="font-size: 3.5rem;"></div>
         <div id="modalBigDisplay" class="modal-big-display"></div>
-        <div id="modalSubText" style="font-size: 1.4rem; color: #555; font-weight: bold;"></div>
-        <button id="modalSpeakerBtn" class="btn-speaker-only" style="margin-top: 20px; width:64px; height:64px; font-size:2.2rem;" title="Tekan untuk Dengar">
-            🔊
-        </button>
+        <div id="modalSubText" style="font-size: 1.3rem; color: #555; font-weight: bold;"></div>
+        <button id="modalSpeakerBtn" class="btn-speaker-only" style="margin: 20px auto 0; width: 64px; height: 64px; font-size: 2rem;">🔊</button>
     </div>
 </div>
 
 <div id="toast" class="toast">Syabas! Jawapan Betul! 🎉</div>
 
 <script>
-    /* Global Variables & State */
     let currentSkill = 1;
+    let currentModul1Tab = 'vokal';
     let score = 0;
     let isMusicPlaying = false;
     let audioCtx = null;
     let musicInterval = null;
     let isAudioUnlocked = false;
+
+    // Active Audio Players
     let activeOnlineAudio = null;
+    let isSpeakingPassage = false;
+    let speechQueueIndex = 0;
 
     const svgMeja = `<svg width="54" height="54" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="56" height="10" rx="2" fill="#8D6E63" stroke="#4E342E" stroke-width="2"/><rect x="10" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="48" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="20" y="30" width="5" height="18" fill="#5D4037"/><rect x="39" y="30" width="5" height="18" fill="#5D4037"/></svg>`;
 
-    /* Datasets */
     const dataVokal = [
-        { letter: 'a', word: 'ayam', emoji: '🐓', note: 'a' },
-        { letter: 'e', word: 'epal', emoji: '🍎', note: 'e taling' },
-        { letter: 'e', word: 'enam', emoji: '6️⃣', note: 'e pepet' },
-        { letter: 'i', word: 'ikan', emoji: '🐟', note: 'i' },
-        { letter: 'o', word: 'oren', emoji: '🍊', note: 'o' },
-        { letter: 'u', word: 'udang', emoji: '🦐', note: 'u' }
+        { letter: 'a', word: 'ayam', emoji: '🐓', soundAudioText: 'a. ah. ayam' },
+        { letter: 'e', word: 'epal', emoji: '🍎', soundAudioText: 'e. eh. epal' },
+        { letter: 'e', word: 'enam', emoji: '6️⃣', soundAudioText: 'e. er. enam' },
+        { letter: 'i', word: 'ikan', emoji: '🐟', soundAudioText: 'i. ee. ikan' },
+        { letter: 'o', word: 'oren', emoji: '🍊', soundAudioText: 'o. oh. oren' },
+        { letter: 'u', word: 'udang', emoji: '🦐', soundAudioText: 'u. oo. udang' }
     ];
 
     const allLetters = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -929,133 +717,293 @@
     ];
 
     const listDiftong = [
-        { word: 'paip', syllables: ['pa', 'ip'], emoji: '🚰', highlight: 'ai' },
-        { word: 'kain', syllables: ['ka', 'in'], emoji: '🧵', highlight: 'ai' },
-        { word: 'daun', syllables: ['da', 'un'], emoji: '🍃', highlight: 'au' },
-        { word: 'kuih', syllables: ['ku', 'ih'], emoji: '🥮', highlight: 'ui' },
-        { word: 'tuala', syllables: ['tu', 'a', 'la'], emoji: '🧴', highlight: 'ua' },
-        { word: 'limau', syllables: ['li', 'mau'], emoji: '🍋', highlight: 'au' },
-        { word: 'pisau', syllables: ['pi', 'sau'], emoji: '🔪', highlight: 'au' },
-        { word: 'pulau', syllables: ['pu', 'lau'], emoji: '🏝️', highlight: 'au' }
+        { word: 'paip', syllables: ['pa', 'ip'], emoji: '🚰' },
+        { word: 'kain', syllables: ['ka', 'in'], emoji: '🧵' },
+        { word: 'daun', syllables: ['da', 'un'], emoji: '🍃' },
+        { word: 'kuih', syllables: ['ku', 'ih'], emoji: '🥮' },
+        { word: 'tuala', syllables: ['tu', 'a', 'la'], emoji: '🧴' },
+        { word: 'limau', syllables: ['li', 'mau'], emoji: '🍋' },
+        { word: 'pisau', syllables: ['pi', 'sau'], emoji: '🔪' },
+        { word: 'pulau', syllables: ['pu', 'lau'], emoji: '🏝️' }
     ];
 
     const listDigraf = [
-        { word: 'nyamuk', syllables: ['nya', 'muk'], emoji: '🦟', digraf: 'ny' },
-        { word: 'penyu', syllables: ['pe', 'nyu'], emoji: '🐢', digraf: 'ny' },
-        { word: 'bunga', syllables: ['bu', 'nga'], emoji: '🌸', digraf: 'ng' },
-        { word: 'syampu', syllables: ['syam', 'pu'], emoji: '🧴', digraf: 'sy' },
-        { word: 'khemah', syllables: ['khe', 'mah'], emoji: '⛺', digraf: 'kh' },
-        { word: 'telinga', syllables: ['te', 'li', 'nga'], emoji: '👂', digraf: 'ng' }
+        { word: 'nyamuk', syllables: ['nya', 'muk'], emoji: '🦟' },
+        { word: 'penyu', syllables: ['pe', 'nyu'], emoji: '🐢' },
+        { word: 'bunga', syllables: ['bu', 'nga'], emoji: '🌸' },
+        { word: 'syampu', syllables: ['syam', 'pu'], emoji: '🧴' },
+        { word: 'khemah', syllables: ['khe', 'mah'], emoji: '⛺' },
+        { word: 'telinga', syllables: ['te', 'li', 'nga'], emoji: '👂' }
     ];
 
-    const listAyat = [
-        { text: 'Ini ubi.', translation: 'This is a tapioca.', emoji: '🍠' },
-        { text: 'Ubi ini manis.', translation: 'This tapioca is sweet.', emoji: '🍠' },
-        { text: 'Ibu beli ubi.', translation: 'Mother buys tapioca.', emoji: '🛍️' },
-        { text: 'Ini bola saya.', translation: 'This is my ball.', emoji: '⚽' },
-        { text: 'Bola ini bulat.', translation: 'This ball is round.', emoji: '⚽' },
-        { text: 'Saya suka main bola.', translation: 'I like playing ball.', emoji: '🏃' }
+    const listAyatData = [
+        { num: 1, hyphenated: 'A-bang ber-ja-lan ka-ki ke se-ko-lah.', emoji: '🏫' },
+        { num: 2, hyphenated: 'Sal-mi me-no-long i-bu-nya me-na-nam po-kok bu-nga.', emoji: '🌸' },
+        { num: 3, hyphenated: 'Da-ni dan a-dik-nya per-gi me-man-cing i-kan.', emoji: '🎣' },
+        { num: 4, hyphenated: 'Mu-rid-mu-rid ber-a-tur ke-ti-ka mem-be-li ma-ka-nan di kan-tin.', emoji: '🍱' },
+        { num: 5, hyphenated: 'Da-tuk dan ne-nek ting-gal di kam-pung.', emoji: '🏡' },
+        { num: 6, hyphenated: 'Di ru-mah A-nis a-da ko-lam re-nang.', emoji: '🏊' },
+        { num: 7, hyphenated: 'Bu-ah li-mau i-tu sa-ngat ma-sam.', emoji: '🍋' }
     ];
 
-    const listPemahaman = [
+    const listPemahamanData = [
         {
-            title: 'Petikan Pemahaman 1: Ikan Comel',
-            passage: 'Saya ada seekor ikan air tawar. Nama ikan saya Comel. Ikan Comel berenang dengan laju di dalam akuarium. Comel sangat suka makan pelet ikan setiap pagi.',
-            emoji: '🐟',
+            title: 'Petikan 1: Berkelah di Pantai',
+            hyphenatedPassage: 'Pa-da ha-ri A-had, A-min dan ke-lu-ar-ga-nya per-gi ber-ke-lah. Ra-mai o-rang pa-da ha-ri i-tu. A-yah me-le-tak-kan ba-rang di ba-wah po-kok. A-min per-gi ber-e-nang, ma-na-ka-la ba-pa dan a-dik A-min ber-ma-in bo-la di te-pi pan-tai.\n\nTi-ba-ti-ba, A-min ter-de-ngar o-rang me-min-ta to-long. Su-a-ra i-tu de-kat de-ngan A-min. A-min li-hat se-o-rang bu-dak le-mas. A-min me-na-rik ta-ngan bu-dak i-tu dan ber-e-nang ke pan-tai.\n\nO-rang ra-mai di si-tu mem-ban-tu A-min meng-ang-kat bu-dak i-tu. Ba-pa bu-dak i-tu ber-te-ri-ma ka-sih ke-pa-da A-min. A-min sa-ngat gem-bi-ra ke-ra-na da-pat me-no-long o-rang.',
+            emoji: '🏖️',
             questions: [
-                { q: 'Apakah nama ikan saya?', options: ['Comel', 'Momo', 'Lulu'], correct: 0 },
-                { q: 'Di manakah ikan Comel berenang?', options: ['Sungai', 'Akuarium', 'Laut'], correct: 1 },
-                { q: 'Bilakah Comel makan pelet?', options: ['Malam', 'Petang', 'Setiap pagi'], correct: 2 }
+                {
+                    q: 'Bi-la-kah A-min dan ke-lu-ar-ga-nya per-gi ber-ke-lah?',
+                    options: ['Pa-da ha-ri A-had', 'Pa-da ha-ri Sab-tu', 'Pa-da ha-ri Is-nin'],
+                    correct: 0
+                },
+                {
+                    q: 'A-pa-kah yang di-la-ku-kan o-leh a-dik A-min dan ba-pa-nya?',
+                    options: ['Ber-e-nang di la-ut', 'Ber-ma-in bo-la di te-pi pan-tai', 'Mem-be-li ma-ka-nan'],
+                    correct: 1
+                },
+                {
+                    q: 'Me-nga-pa-kah o-rang i-tu me-min-ta to-long?',
+                    options: ['Ke-ra-na la-par', 'Ke-ra-na se-o-rang bu-dak le-mas', 'Ke-ra-na ke-hi-la-ngan ba-rang'],
+                    correct: 1
+                }
             ]
         },
         {
-            title: 'Petikan Pemahaman 2: Kucing Sang Belang',
-            passage: 'Ali ada seekor kucing peliharaan. Nama kucing Ali ialah Sang Belang. Bulu Sang Belang berwarna coklat dan hitam. Sang Belang suka mengejar bola benang di ruang tamu.',
-            emoji: '🐱',
+            title: 'Petikan 2: Pulang ke Dusun Datuk',
+            hyphenatedPassage: 'Pa-da ming-gu le-pas, Sa-ni dan ke-lu-ar-ga-nya pu-lang ke kam-pung. Sa-ni meng-i-kut da-tuk-nya per-gi ke du-sun. Ke-ti-ka i-tu mu-sim bu-ah-bu-ah-an. A-da ba-nyak po-kok bu-ah-bu-ah-an.\n\nSa-ni mem-ban-tu da-tuk-nya me-mu-ngut bu-ah du-ri-an. Se-le-pas i-tu, da-tuk Sa-ni meng-a-it bu-ah ram-bu-tan dan mang-gis. Sa-ni ma-kan se-pu-luh u-las du-ri-an dan ti-ga bi-ji bu-ah ram-bu-tan.\n\nU-da-ra di du-sun nya-man dan se-gar. Sa-ni ber-a-sa se-ro-nok dan gem-bi-ra ber-a-da di kam-pung da-tuk-nya.',
+            emoji: '🌳',
             questions: [
-                { q: 'Siapakah nama kucing Ali?', options: ['Sang Belang', 'Si Comel', 'Tom'], correct: 0 },
-                { q: 'Apakah warna bulu Sang Belang?', options: ['Putih dan kuning', 'Coklat dan hitam', 'Kelabu'], correct: 1 },
-                { q: 'Di manakah Sang Belang mengejar bola benang?', options: ['Dapur', 'Taman', 'Ruang tamu'], correct: 2 }
+                {
+                    q: 'Si-a-pa-kah yang per-gi ke du-sun?',
+                    options: ['Sa-ni dan da-tuk-nya', 'A-li dan ba-pa-nya', 'A-min dan i-bu-nya'],
+                    correct: 0
+                },
+                {
+                    q: 'A-pa-kah po-kok bu-ah-bu-ah-an yang a-da di du-sun da-tuk?',
+                    options: ['Po-kok du-ri-an, ram-bu-tan dan mang-gis', 'Po-kok e-pal dan o-ren', 'Po-kok pi-sang sa-ha-ja'],
+                    correct: 0
+                },
+                {
+                    q: 'A-pa-kah pe-ra-sa-an Sa-ni bi-la pu-lang ke kam-pung?',
+                    options: ['Ber-a-sa se-ro-nok dan gem-bi-ra', 'Ber-a-sa se-dih dan bo-san', 'Ber-a-sa ta-kut'],
+                    correct: 0
+                }
             ]
         }
     ];
 
-    /* Automatic Audio Context Unlocker */
+    function stripHyphens(text) {
+        return text.replace(/-/g, '');
+    }
+
+    function stopAllAudio() {
+        isSpeakingPassage = false;
+        if (window.currentSafetyTimer) {
+            clearTimeout(window.currentSafetyTimer);
+            window.currentSafetyTimer = null;
+        }
+        if (activeOnlineAudio) {
+            activeOnlineAudio.pause();
+            activeOnlineAudio.currentTime = 0;
+            activeOnlineAudio.onended = null;
+            activeOnlineAudio.onerror = null;
+            activeOnlineAudio = null;
+        }
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
     function unlockAudioEngine() {
         if (!isAudioUnlocked) {
             initAudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.resume();
             }
             isAudioUnlocked = true;
         }
     }
-    document.addEventListener('click', unlockAudioEngine, { once: false });
-    document.addEventListener('touchstart', unlockAudioEngine, { once: false });
+    document.addEventListener('click', unlockAudioEngine, { passive: true });
+    document.addEventListener('touchstart', unlockAudioEngine, { passive: true });
 
-    /* Hybrid Audio Engine - Google Online Audio TTS with Browser Fallback */
-    function speakText(text) {
-        if (!text) return;
+    function playSequentialSentences(sentences) {
+        stopAllAudio();
         unlockAudioEngine();
 
-        // Stop any active online audio or speech synthesis
-        if (activeOnlineAudio) {
-            activeOnlineAudio.pause();
-            activeOnlineAudio = null;
-        }
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
+        if (!sentences || sentences.length === 0) return;
+
+        const cleanSentences = sentences.map(s => s.trim()).filter(s => s.length > 0);
+        if (cleanSentences.length === 0) return;
+
+        speechQueueIndex = 0;
+        isSpeakingPassage = true;
+
+        function speakNextSentence() {
+            if (!isSpeakingPassage || speechQueueIndex >= cleanSentences.length) {
+                isSpeakingPassage = false;
+                return;
+            }
+
+            const sentenceText = cleanSentences[speechQueueIndex];
+            speechQueueIndex++;
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(sentenceText);
+                const voices = window.speechSynthesis.getVoices();
+
+                // Cari hanya suara Bahasa Melayu (ms / ms-MY), elakkan bahasa Indonesia (id)
+                let voice = voices.find(v => {
+                    const l = v.lang.toLowerCase();
+                    return (l.includes('ms') || l.includes('melayu')) && !l.includes('id');
+                });
+
+                if (voice) {
+                    utterance.voice = voice;
+                    utterance.lang = voice.lang;
+                } else {
+                    utterance.lang = 'ms-MY';
+                }
+                utterance.rate = 0.85;
+
+                let hasFinished = false;
+
+                const cleanupAndNext = () => {
+                    if (hasFinished) return;
+                    hasFinished = true;
+                    if (window.currentSafetyTimer) {
+                        clearTimeout(window.currentSafetyTimer);
+                        window.currentSafetyTimer = null;
+                    }
+                    setTimeout(() => {
+                        if (isSpeakingPassage) speakNextSentence();
+                    }, 200);
+                };
+
+                utterance.onend = cleanupAndNext;
+
+                utterance.onerror = () => {
+                    if (hasFinished) return;
+                    hasFinished = true;
+                    if (window.currentSafetyTimer) {
+                        clearTimeout(window.currentSafetyTimer);
+                        window.currentSafetyTimer = null;
+                    }
+                    speakSentenceOnline(sentenceText, () => {
+                        if (isSpeakingPassage) speakNextSentence();
+                    });
+                };
+
+                window.currentSafetyTimer = setTimeout(() => {
+                    if (!hasFinished) {
+                        window.speechSynthesis.cancel();
+                        cleanupAndNext();
+                    }
+                }, Math.max(3000, sentenceText.length * 150));
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                speakSentenceOnline(sentenceText, () => {
+                    if (isSpeakingPassage) speakNextSentence();
+                });
+            }
         }
 
-        const cleanText = text.trim();
-        
-        // Primary Attempt: Cloud Speech Synthesis API
-        const onlineUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ms&q=${encodeURIComponent(cleanText)}`;
-        
+        speakNextSentence();
+    }
+
+    function speakSentenceOnline(text, onComplete) {
+        if (activeOnlineAudio) {
+            activeOnlineAudio.pause();
+            activeOnlineAudio.onended = null;
+            activeOnlineAudio.onerror = null;
+            activeOnlineAudio = null;
+        }
+        const encoded = encodeURIComponent(text);
+        const onlineUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ms&q=${encoded}`;
+
         activeOnlineAudio = new Audio(onlineUrl);
-        activeOnlineAudio.playbackRate = 0.9;
-        
-        let playPromise = activeOnlineAudio.play();
-        
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                // Audio played successfully via Online API
-            }).catch(err => {
-                // Secondary Fallback: Native Browser SpeechSynthesis API
-                fallbackWebSpeech(cleanText);
+        activeOnlineAudio.playbackRate = 0.85;
+
+        let hasEnded = false;
+
+        const done = () => {
+            if (hasEnded) return;
+            hasEnded = true;
+            if (window.currentSafetyTimer) {
+                clearTimeout(window.currentSafetyTimer);
+                window.currentSafetyTimer = null;
+            }
+            if (onComplete) setTimeout(onComplete, 200);
+        };
+
+        activeOnlineAudio.onended = done;
+        activeOnlineAudio.onerror = done;
+
+        window.currentSafetyTimer = setTimeout(done, Math.max(3000, text.length * 150));
+
+        let p = activeOnlineAudio.play();
+        if (p !== undefined) {
+            p.catch(() => {
+                done();
             });
         }
     }
 
-    function fallbackWebSpeech(text) {
-        if (!('speechSynthesis' in window)) return;
+    function speakText(text) {
+        if (!text) return;
+        unlockAudioEngine();
         
-        window.speechSynthesis.resume();
-        const utterance = new SpeechSynthesisUtterance(text);
-        
-        // Try to locate Malay or Indonesian voice pack
-        const voices = window.speechSynthesis.getVoices();
-        let msVoice = voices.find(v => v.lang.startsWith('ms') || v.lang.startsWith('id'));
-        
-        if (msVoice) {
-            utterance.voice = msVoice;
+        const cleanText = text.trim();
+        const sentences = cleanText.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0);
+
+        if (sentences.length > 1) {
+            playSequentialSentences(sentences);
         } else {
-            utterance.lang = 'ms-MY';
-        }
-        
-        utterance.rate = 0.85;
-        window.speechSynthesis.speak(utterance);
-    }
-
-    // Preload native speech voices
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.getVoices();
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+            playSequentialSentences([cleanText]);
         }
     }
 
-    /* Web Audio API for Effects */
+    function playLongPassage(fullHyphenatedText) {
+        if (!fullHyphenatedText) return;
+        unlockAudioEngine();
+
+        let cleanText = stripHyphens(fullHyphenatedText).replace(/\n+/g, '. ');
+        let sentences = cleanText.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 0);
+
+        if (sentences.length === 0) {
+            sentences = [cleanText];
+        }
+
+        playSequentialSentences(sentences);
+    }
+
+    function spellAndSayWord(word, syllables) {
+        if (!syllables || !Array.isArray(syllables) || syllables.length === 0) {
+            let spelled = word.split('').join(', ') + `, ${word}`;
+            speakText(spelled);
+            return;
+        }
+
+        let parts = [];
+        syllables.forEach(syl => {
+            if (syl.length === 1) {
+                parts.push(syl);
+            } else {
+                let letters = syl.split('').join(', ');
+                parts.push(`${letters}, ${syl}`);
+            }
+        });
+
+        let fullSpellingString = `${parts.join('. ')}. ${word}.`;
+        speakText(fullSpellingString);
+    }
+
     function initAudioContext() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1068,74 +1016,96 @@
     function playBeep(type) {
         initAudioContext();
         if (!audioCtx) return;
-
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-
         const now = audioCtx.currentTime;
 
         if (type === 'correct') {
-            osc.type = 'sine';
             osc.frequency.setValueAtTime(523.25, now);
             osc.frequency.setValueAtTime(659.25, now + 0.1);
-            osc.frequency.setValueAtTime(783.99, now + 0.2);
-            gain.gain.setValueAtTime(0.25, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-            osc.start(now);
-            osc.stop(now + 0.45);
-        } else if (type === 'wrong') {
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.start(now); osc.stop(now + 0.4);
+        } else {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(220, now);
-            osc.frequency.exponentialRampToValueAtTime(110, now + 0.3);
-            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.setValueAtTime(0.15, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-            osc.start(now);
-            osc.stop(now + 0.3);
+            osc.start(now); osc.stop(now + 0.3);
         }
     }
 
     function toggleBackgroundMusic() {
         unlockAudioEngine();
-        const btn = document.getElementById('musicToggle');
-        const visualizer = document.getElementById('musicVisualizer');
+        
+        if (!audioCtx) {
+            initAudioContext();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
 
         isMusicPlaying = !isMusicPlaying;
+        const btn = document.getElementById('musicToggle');
+        const btnText = document.getElementById('musicBtnText');
+        const visualizer = document.getElementById('musicVisualizer');
 
         if (isMusicPlaying) {
             btn.classList.add('playing');
+            btnText.innerText = 'Main';
             visualizer.style.display = 'inline-flex';
-            document.getElementById('musicBtnText').innerText = 'Main';
             startMelody();
         } else {
             btn.classList.remove('playing');
+            btnText.innerText = 'Muzik';
             visualizer.style.display = 'none';
-            document.getElementById('musicBtnText').innerText = 'Muzik';
             if (musicInterval) clearInterval(musicInterval);
         }
     }
 
     function startMelody() {
-        const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
-        let idx = 0;
+        if (musicInterval) clearInterval(musicInterval);
+
+        const sequence = [
+            261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 349.23, 440.00, 523.25
+        ];
+        let step = 0;
+
+        playMelodyNote();
+
         musicInterval = setInterval(() => {
-            if (!isMusicPlaying || !audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(notes[idx], audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.4);
-            idx = (idx + 1) % notes.length;
-        }, 500);
+            if (!isMusicPlaying) return;
+            playMelodyNote();
+        }, 320);
+
+        function playMelodyNote() {
+            if (!audioCtx) initAudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            try {
+                const freq = sequence[step];
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.28);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.28);
+
+                step = (step + 1) % sequence.length;
+            } catch(e) {}
+        }
     }
 
-    /* Router Navigation */
     function switchSkill(skillNum) {
         currentSkill = skillNum;
         document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1158,37 +1128,65 @@
         }
     }
 
+    function switchModul1Tab(tabType, btnEl) {
+        currentModul1Tab = tabType;
+        document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
+        renderSkill1();
+    }
+
     function renderSkill1() {
         const main = document.getElementById('mainContent');
         let html = `
             <div class="section-header">
                 <div class="section-title"><span>🔤</span> Modul 1: Huruf Abjad & Vokal</div>
             </div>
-            <h4 style="margin-bottom:12px; color:#1565C0;">Vokal Utama</h4>
-            <div class="cards-grid">
+
+            <div class="sub-tab-container">
+                <button class="sub-tab ${currentModul1Tab === 'vokal' ? 'active' : ''}" onclick="switchModul1Tab('vokal', this)">Huruf Vokal 🍎</button>
+                <button class="sub-tab ${currentModul1Tab === 'kecil' ? 'active' : ''}" onclick="switchModul1Tab('kecil', this)">Huruf Kecil (a-z) 🔤</button>
+                <button class="sub-tab ${currentModul1Tab === 'besar' ? 'active' : ''}" onclick="switchModul1Tab('besar', this)">Huruf Besar (A-Z) 🔠</button>
+            </div>
         `;
 
-        dataVokal.forEach(item => {
-            html += `
-                <div class="card-item" onclick="openCardModal('${item.letter}', '${item.word}', '${item.emoji}')">
-                    <div style="font-size:2rem;">${item.emoji}</div>
-                    <div class="card-text vokal">${item.letter.toUpperCase()} ${item.letter}</div>
-                    <div style="font-size:0.85rem; color:#666;">${item.word}</div>
-                </div>
-            `;
-        });
+        if (currentModul1Tab === 'vokal') {
+            html += `<h4 style="margin-bottom:12px; color:#1565C0;">Bahagian 1: Huruf Vokal Bersama Gambar</h4><div class="cards-grid">`;
+            dataVokal.forEach(item => {
+                let audioString = item.soundAudioText;
+                html += `
+                    <div class="card-item" onclick="openCardModal('${item.letter}', 'Perkataan: ${item.word}', '${item.emoji}', '${audioString}')">
+                        <div style="font-size:2rem;">${item.emoji}</div>
+                        <div class="card-text vokal">${item.letter.toUpperCase()} ${item.letter}</div>
+                        <div style="font-size:0.85rem; color:#666;">${item.word}</div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        } else if (currentModul1Tab === 'kecil') {
+            html += `<h4 style="margin-bottom:12px; color:#1565C0;">Bahagian 2: Huruf Kecil (a-z)</h4><div class="cards-grid">`;
+            allLetters.forEach(l => {
+                let audioString = `${l}`;
+                html += `
+                    <div class="card-item" onclick="openCardModal('${l}', 'Huruf Kecil', '🔤', '${audioString}')">
+                        <div class="card-text ${'aeiou'.includes(l) ? 'vokal' : 'konsonan'}">${l}</div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        } else if (currentModul1Tab === 'besar') {
+            html += `<h4 style="margin-bottom:12px; color:#1565C0;">Bahagian 3: Huruf Besar (A-Z)</h4><div class="cards-grid">`;
+            allLetters.forEach(l => {
+                let upperL = l.toUpperCase();
+                let audioString = `${upperL}`;
+                html += `
+                    <div class="card-item" onclick="openCardModal('${upperL}', 'Huruf Besar', '🔠', '${audioString}')">
+                        <div class="card-text ${'aeiou'.includes(l) ? 'vokal' : 'konsonan'}">${upperL}</div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        }
 
-        html += `</div><h4 style="margin:20px 0 12px; color:#1565C0;">Semua Abjad (A-Z)</h4><div class="cards-grid">`;
-
-        allLetters.forEach(l => {
-            html += `
-                <div class="card-item" onclick="openCardModal('${l}', 'Huruf ${l.toUpperCase()}', '🔤')">
-                    <div class="card-text ${'aeiou'.includes(l) ? 'vokal' : 'konsonan'}">${l.toUpperCase()} ${l}</div>
-                </div>
-            `;
-        });
-
-        html += `</div>`;
         main.innerHTML = html;
     }
 
@@ -1202,8 +1200,9 @@
         `;
 
         listKV.forEach(kv => {
+            let audioString = `${kv[0]}, ${kv[1]}, ${kv}`;
             html += `
-                <div class="card-item" onclick="openCardModal('${kv}', 'Suku kata ${kv}', '💬')">
+                <div class="card-item" onclick="openCardModal('${kv}', 'Suku kata ${kv}', '💬', '${audioString}')">
                     <div class="card-text">
                         <span class="konsonan">${kv[0]}</span><span class="vokal">${kv[1]}</span>
                     </div>
@@ -1221,83 +1220,6 @@
     function renderSkill6() { renderWordListModule('🍇', 'Modul 6: Diftong & Vokal Berganding', listDiftong); }
     function renderSkill7() { renderWordListModule('🎺', 'Modul 7: Digraf & Konsonan Bergabung', listDigraf); }
 
-    function renderSkill8() {
-        const main = document.getElementById('mainContent');
-        let html = `
-            <div class="section-header">
-                <div class="section-title"><span>📝</span> Modul 8: Bacaan Ayat Mudah</div>
-            </div>
-        `;
-
-        listAyat.forEach((item, idx) => {
-            html += `
-                <div class="word-display-card">
-                    <div class="word-visual">${item.emoji}</div>
-                    <div class="word-details">
-                        <div class="word-syllables" style="color:#2E7D32;">${item.text}</div>
-                        <div style="color:#666; font-size:0.95rem;">${item.translation}</div>
-                    </div>
-                    <button class="btn-speaker-only" onclick="playAyatText(${idx})">🔊</button>
-                </div>
-            `;
-        });
-
-        main.innerHTML = html;
-    }
-
-    function playAyatText(idx) {
-        if (listAyat[idx]) speakText(listAyat[idx].text);
-    }
-
-    function renderSkill9() {
-        const main = document.getElementById('mainContent');
-
-        let html = `
-            <div class="section-header">
-                <div class="section-title"><span>💡</span> Modul 9: Pemahaman Bacaan</div>
-            </div>
-        `;
-
-        listPemahaman.forEach((item, pIdx) => {
-            html += `
-                <div class="passage-card-wrapper">
-                    <div class="passage-box">
-                        <div class="passage-header-row">
-                            <strong style="color:#2E7D32; font-size:1.4rem;">${item.emoji} ${item.title}</strong>
-                            <button class="btn-speaker-only" onclick="playPassageAudio(${pIdx})">🔊</button>
-                        </div>
-                        <p>${item.passage}</p>
-                    </div>
-                    <div class="quiz-container">
-                        <div class="quiz-header-badge">⭐ Soalan Pemahaman ${pIdx + 1}</div>
-            `;
-
-            item.questions.forEach((qObj, qIdx) => {
-                html += `
-                    <div class="quiz-card">
-                        <p>${qIdx + 1}. ${qObj.q}</p>
-                        <div class="options-container">
-                `;
-                qObj.options.forEach((opt, oIdx) => {
-                    html += `
-                        <button class="option-btn" onclick="checkAnswer(this, ${oIdx === qObj.correct})">${opt}</button>
-                    `;
-                });
-                html += `</div></div>`;
-            });
-
-            html += `</div></div>`;
-        });
-
-        main.innerHTML = html;
-    }
-
-    function playPassageAudio(idx) {
-        if (listPemahaman[idx]) {
-            speakText(listPemahaman[idx].passage);
-        }
-    }
-
     function renderWordListModule(icon, title, dataset) {
         const main = document.getElementById('mainContent');
         let html = `
@@ -1312,19 +1234,101 @@
                 return `<span class="konsonan">${s[0]}</span><span class="vokal">${s.slice(1)}</span>`;
             }).join('-');
 
+            const sylJson = JSON.stringify(item.syllables).replace(/"/g, '&quot;');
+
             html += `
-                <div class="word-display-card" onclick="openCardModal('${item.word}', 'Ejaan: ${item.syllables.join(' - ')}', '${item.emoji}')">
+                <div class="word-display-card" onclick="openCardModalSpelling('${item.word}', 'Ejaan: ${item.syllables.join(' - ')}', '${item.emoji}', '${item.word}', ${sylJson})">
                     <div class="word-visual">${item.emoji}</div>
                     <div class="word-details">
                         <div class="word-syllables">${displaySyllables}</div>
                         <div style="color:#777; font-size:0.9rem; text-transform:capitalize;">${item.word}</div>
                     </div>
-                    <button class="btn-speaker-only" onclick="event.stopPropagation(); speakText('${item.word}')">🔊</button>
+                    <button class="btn-speaker-only" onclick="event.stopPropagation(); spellAndSayWord('${item.word}', ${sylJson})">🔊</button>
                 </div>
             `;
         });
 
         main.innerHTML = html;
+    }
+
+    function renderSkill8() {
+        const main = document.getElementById('mainContent');
+        let html = `
+            <div class="section-header">
+                <div class="section-title"><span>📝</span> Modul 8: Kemahiran 31 - Membaca Dan Membina Ayat Mudah</div>
+            </div>
+            <p style="margin-bottom:15px; font-weight:bold; color:#2E7D32;">Baca ayat-ayat di bawah ini:</p>
+        `;
+
+        listAyatData.forEach((item) => {
+            let coloredSentence = renderColoredHyphenatedText(item.hyphenated);
+            let plainText = stripHyphens(item.hyphenated);
+
+            html += `
+                <div class="word-display-card">
+                    <div class="word-visual" style="font-weight:bold; color:#E65100; font-size:1.8rem;">${item.num}</div>
+                    <div class="word-details">
+                        <div style="font-size:1.35rem; line-height:1.6;">${coloredSentence}</div>
+                    </div>
+                    <button class="btn-speaker-only" onclick="speakText('${plainText.replace(/'/g, "\\'")}')">🔊</button>
+                </div>
+            `;
+        });
+
+        main.innerHTML = html;
+    }
+
+    function renderSkill9() {
+        const main = document.getElementById('mainContent');
+        let html = `
+            <div class="section-header">
+                <div class="section-title"><span>💡</span> Modul 9: Kemahiran 32 - Bacaan Dan Pemahaman</div>
+            </div>
+            <p style="margin-bottom:15px; font-weight:bold; color:#2E7D32;">Baca petikan dan jawab soalan pemahaman:</p>
+        `;
+
+        listPemahamanData.forEach((item, pIdx) => {
+            let paragraphs = item.hyphenatedPassage.split('\n\n').map(p => renderColoredHyphenatedText(p)).join('<br><br>');
+
+            html += `
+                <div class="passage-card-wrapper">
+                    <div class="passage-box">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:2px dashed #A5D6A7; padding-bottom:8px;">
+                            <strong style="color:#2E7D32; font-size:1.3rem;">${item.emoji} ${item.title}</strong>
+                            <button class="btn-speaker-only" onclick="playPassageAudio(${pIdx})">🔊</button>
+                        </div>
+                        <div>${paragraphs}</div>
+                    </div>
+                    <div class="quiz-container">
+                        <strong style="color:#E65100; font-size:1.2rem;">⭐ Soalan Pemahaman ${pIdx + 1}</strong>
+            `;
+
+            item.questions.forEach((qObj, qIdx) => {
+                let coloredQuestion = renderColoredHyphenatedText(qObj.q);
+
+                html += `
+                    <div class="quiz-card" style="margin-top:12px;">
+                        <p style="font-size:1.15rem; font-weight:bold; color:#E65100;">${qIdx + 1}. ${coloredQuestion}</p>
+                        <div class="options-container">
+                `;
+                qObj.options.forEach((opt, oIdx) => {
+                    let coloredOpt = renderColoredHyphenatedText(opt);
+                    html += `
+                        <button class="option-btn" onclick="checkAnswer(this, ${oIdx === qObj.correct})">${coloredOpt}</button>
+                    `;
+                });
+                html += `</div></div>`;
+            });
+
+            html += `</div></div>`;
+        });
+
+        main.innerHTML = html;
+    }
+
+    function playPassageAudio(idx) {
+        if (!listPemahamanData[idx]) return;
+        playLongPassage(listPemahamanData[idx].hyphenatedPassage);
     }
 
     function checkAnswer(btn, isCorrect) {
@@ -1333,7 +1337,7 @@
         if (isCorrect) {
             btn.classList.add('correct');
             playBeep('correct');
-            addScore(10, btn);
+            addScore(10);
             showToast('Syabas! Jawapan Betul! 🎉');
             triggerConfetti();
         } else {
@@ -1343,26 +1347,12 @@
         }
     }
 
-    function addScore(points, targetEl) {
+    function addScore(points) {
         score += points;
-        const scoreBoard = document.getElementById('scoreBoard');
         document.getElementById('totalScore').innerText = score;
-        scoreBoard.classList.add('bump');
-        setTimeout(() => scoreBoard.classList.remove('bump'), 400);
-
-        if (targetEl) {
-            const rect = targetEl.getBoundingClientRect();
-            const floatScore = document.createElement('div');
-            floatScore.className = 'floating-score';
-            floatScore.innerText = `+${points}`;
-            floatScore.style.left = `${rect.left + rect.width / 2 - 20}px`;
-            floatScore.style.top = `${rect.top}px`;
-            document.body.appendChild(floatScore);
-            setTimeout(() => floatScore.remove(), 1200);
-        }
     }
 
-    function openCardModal(bigText, subText, emoji) {
+    function openCardModal(bigText, subText, emoji, directAudio) {
         document.getElementById('modalBigDisplay').innerText = bigText;
         document.getElementById('modalSubText').innerText = subText || '';
         document.getElementById('modalEmoji').innerHTML = emoji || '⭐';
@@ -1370,9 +1360,22 @@
         const modal = document.getElementById('cardModal');
         modal.classList.add('active');
 
-        document.getElementById('modalSpeakerBtn').onclick = () => speakText(bigText);
+        document.getElementById('modalSpeakerBtn').onclick = () => speakText(directAudio);
 
-        speakText(bigText);
+        speakText(directAudio);
+    }
+
+    function openCardModalSpelling(bigText, subText, emoji, word, syllables) {
+        document.getElementById('modalBigDisplay').innerText = bigText;
+        document.getElementById('modalSubText').innerText = subText || '';
+        document.getElementById('modalEmoji').innerHTML = emoji || '⭐';
+
+        const modal = document.getElementById('cardModal');
+        modal.classList.add('active');
+
+        document.getElementById('modalSpeakerBtn').onclick = () => spellAndSayWord(word, syllables);
+
+        spellAndSayWord(word, syllables);
     }
 
     function closeCardModal(e) {
@@ -1381,8 +1384,7 @@
 
     function closeCardModalDirect() {
         document.getElementById('cardModal').classList.remove('active');
-        if (activeOnlineAudio) activeOnlineAudio.pause();
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        stopAllAudio();
     }
 
     function showToast(msg) {
@@ -1405,14 +1407,14 @@
         canvas.height = window.innerHeight;
 
         const particles = [];
-        const colors = ['#FF5722', '#4CAF50', '#FFEB3B', '#2196F3', '#E91E63', '#9C27B0'];
+        const colors = ['#FF5722', '#4CAF50', '#FFEB3B', '#2196F3', '#E91E63'];
 
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 50; i++) {
             particles.push({
                 x: canvas.width / 2,
                 y: canvas.height / 2,
-                vx: (Math.random() - 0.5) * 14,
-                vy: (Math.random() - 0.7) * 14,
+                vx: (Math.random() - 0.5) * 12,
+                vy: (Math.random() - 0.7) * 12,
                 size: Math.random() * 8 + 4,
                 color: colors[Math.floor(Math.random() * colors.length)],
                 alpha: 1
