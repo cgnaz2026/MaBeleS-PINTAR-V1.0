@@ -857,7 +857,7 @@
         <div id="modalEmoji" style="font-size: 3.8rem; display: flex; justify-content: center; align-items: center;"></div>
         <div id="modalBigDisplay" class="modal-big-display"></div>
         <div id="modalSubText" style="font-size: 1.4rem; color: #555; font-weight: bold;"></div>
-        <button id="modalSpeakerBtn" class="btn-speaker-only" style="margin-top: 20px; width:64px; height:64px; font-size:2.2rem;" title="Tekan untuk Dengar / Stop">
+        <button id="modalSpeakerBtn" class="btn-speaker-only" style="margin-top: 20px; width:64px; height:64px; font-size:2.2rem;" title="Tekan untuk Dengar">
             🔊
         </button>
     </div>
@@ -873,15 +873,11 @@
     let audioCtx = null;
     let musicInterval = null;
     let isAudioUnlocked = false;
-
-    // Speech Queue
-    let speechQueue = [];
-    let currentQueueIndex = 0;
-    window.currentUtterance = null; // Stored globally to prevent browser Garbage Collection on server
+    let activeOnlineAudio = null;
 
     const svgMeja = `<svg width="54" height="54" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="56" height="10" rx="2" fill="#8D6E63" stroke="#4E342E" stroke-width="2"/><rect x="10" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="48" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="20" y="30" width="5" height="18" fill="#5D4037"/><rect x="39" y="30" width="5" height="18" fill="#5D4037"/></svg>`;
 
-    /* Dataset Collections */
+    /* Datasets */
     const dataVokal = [
         { letter: 'a', word: 'ayam', emoji: '🐓', note: 'a' },
         { letter: 'e', word: 'epal', emoji: '🍎', note: 'e taling' },
@@ -984,121 +980,79 @@
         }
     ];
 
-    /* Automatic Server Audio Unlocker */
+    /* Automatic Audio Context Unlocker */
     function unlockAudioEngine() {
         if (!isAudioUnlocked) {
             initAudioContext();
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.resume();
-                // Play dummy silent utterance to unlock TTS on iOS & Chrome Pages
-                let dummy = new SpeechSynthesisUtterance('');
-                dummy.volume = 0;
-                window.speechSynthesis.speak(dummy);
             }
             isAudioUnlocked = true;
         }
     }
-    document.addEventListener('click', unlockAudioEngine);
-    document.addEventListener('touchstart', unlockAudioEngine);
+    document.addEventListener('click', unlockAudioEngine, { once: false });
+    document.addEventListener('touchstart', unlockAudioEngine, { once: false });
 
-    /* Strict Voice Filter - Rejecting Indonesian (id-ID) */
-    function getMalayVoice() {
-        if (!('speechSynthesis' in window)) return null;
-        const voices = window.speechSynthesis.getVoices();
-        if (!voices || voices.length === 0) return null;
-
-        let voice = voices.find(v => (v.lang === 'ms-MY' || v.lang === 'ms_MY') && !v.lang.toLowerCase().includes('id'));
-        if (voice) return voice;
-
-        voice = voices.find(v => {
-            const l = v.lang.toLowerCase();
-            const n = v.name.toLowerCase();
-            return (l.startsWith('ms') || l.startsWith('zlm')) && !l.includes('id') && !n.includes('indonesia');
-        });
-        if (voice) return voice;
-
-        voice = voices.find(v => {
-            const n = v.name.toLowerCase();
-            return (n.includes('malay') || n.includes('melayu')) && !n.includes('indonesia') && !n.includes('indonesian');
-        });
-        if (voice) return voice;
-
-        return null;
-    }
-
-    // Preload voices
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.getVoices();
-        window.speechSynthesis.onvoiceschanged = () => {
-            window.speechSynthesis.getVoices();
-        };
-    }
-
-    /* Fixed Speech Synthesizer for GitHub Pages */
+    /* Hybrid Audio Engine - Google Online Audio TTS with Browser Fallback */
     function speakText(text) {
-        if (!('speechSynthesis' in window)) return;
-
-        unlockAudioEngine();
-        
-        // Unfreeze engine if paused
-        window.speechSynthesis.resume();
-        window.speechSynthesis.cancel();
-
         if (!text) return;
+        unlockAudioEngine();
 
-        const cleanText = text.replace(/['"\\]/g, ' ');
-        const sentences = cleanText.match(/[^.!?]+[.!?]+/g) || [cleanText];
+        // Stop any active online audio or speech synthesis
+        if (activeOnlineAudio) {
+            activeOnlineAudio.pause();
+            activeOnlineAudio = null;
+        }
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
 
-        speechQueue = sentences;
-        currentQueueIndex = 0;
-
-        // Slight timeout to prevent Chrome web-server speech synthesis freeze
-        setTimeout(() => {
-            playNextInQueue();
-        }, 50);
+        const cleanText = text.trim();
+        
+        // Primary Attempt: Cloud Speech Synthesis API
+        const onlineUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ms&q=${encodeURIComponent(cleanText)}`;
+        
+        activeOnlineAudio = new Audio(onlineUrl);
+        activeOnlineAudio.playbackRate = 0.9;
+        
+        let playPromise = activeOnlineAudio.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // Audio played successfully via Online API
+            }).catch(err => {
+                // Secondary Fallback: Native Browser SpeechSynthesis API
+                fallbackWebSpeech(cleanText);
+            });
+        }
     }
 
-    function playNextInQueue() {
-        if (currentQueueIndex >= speechQueue.length) {
-            window.currentUtterance = null;
-            return;
-        }
-
-        const sentenceText = speechQueue[currentQueueIndex].trim();
-        if (!sentenceText) {
-            currentQueueIndex++;
-            playNextInQueue();
-            return;
-        }
-
-        window.speechSynthesis.resume();
-
-        const utterance = new SpeechSynthesisUtterance(sentenceText);
+    function fallbackWebSpeech(text) {
+        if (!('speechSynthesis' in window)) return;
         
-        const malayVoice = getMalayVoice();
-        if (malayVoice) {
-            utterance.voice = malayVoice;
-            utterance.lang = malayVoice.lang;
+        window.speechSynthesis.resume();
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Try to locate Malay or Indonesian voice pack
+        const voices = window.speechSynthesis.getVoices();
+        let msVoice = voices.find(v => v.lang.startsWith('ms') || v.lang.startsWith('id'));
+        
+        if (msVoice) {
+            utterance.voice = msVoice;
         } else {
             utterance.lang = 'ms-MY';
         }
-
+        
         utterance.rate = 0.85;
-        utterance.pitch = 1.0;
-
-        utterance.onend = () => {
-            currentQueueIndex++;
-            playNextInQueue();
-        };
-
-        utterance.onerror = (e) => {
-            console.warn('TTS Error or Interrupted:', e);
-            currentQueueIndex++;
-            playNextInQueue();
-        };
-
-        window.currentUtterance = utterance; // Prevent GC
         window.speechSynthesis.speak(utterance);
+    }
+
+    // Preload native speech voices
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+        }
     }
 
     /* Web Audio API for Effects */
@@ -1427,6 +1381,7 @@
 
     function closeCardModalDirect() {
         document.getElementById('cardModal').classList.remove('active');
+        if (activeOnlineAudio) activeOnlineAudio.pause();
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
 
