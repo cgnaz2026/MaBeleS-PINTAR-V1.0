@@ -70,17 +70,6 @@
             overflow: hidden;
         }
 
-        .header-bg-illustrations {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.4;
-            z-index: 1;
-        }
-
         .brand-container {
             display: flex;
             align-items: center;
@@ -427,7 +416,7 @@
             line-height: 1.5;
         }
 
-        /* Warna Suku Kata Bagi Modul 8 & 9 */
+        /* Warna Syllables Bagi Modul 8 & 9 */
         .syl-c1 { color: #1565C0; font-weight: bold; } /* Biru */
         .syl-c2 { color: #D32F2F; font-weight: bold; } /* Merah */
         .syl-c3 { color: #2E7D32; font-weight: bold; } /* Hijau */
@@ -740,7 +729,7 @@
         { num: 1, hyphenated: 'A-bang ber-ja-lan ka-ki ke se-ko-lah.', emoji: '🏫' },
         { num: 2, hyphenated: 'Sal-mi me-no-long i-bu-nya me-na-nam po-kok bu-nga.', emoji: '🌸' },
         { num: 3, hyphenated: 'Da-ni dan a-dik-nya per-gi me-man-cing i-kan.', emoji: '🎣' },
-        { num: 4, hyphenated: 'Mu-rid-mu-rid ber-a-tur ke-ti-ka mem-be-li ma-ka-nan di kan-tin.', emoji: '🍱' },
+        { num: 4, hyphenated: 'Mu-rid-mu-rid ber-a-tur ke-ti-ka mem-be-li ma-ka-nan di kan-tin.', emoji: '弁当' },
         { num: 5, hyphenated: 'Da-tuk dan ne-nek ting-gal di kam-pung.', emoji: '🏡' },
         { num: 6, hyphenated: 'Di ru-mah A-nis a-da ko-lam re-nang.', emoji: '🏊' },
         { num: 7, hyphenated: 'Bu-ah li-mau i-tu sa-ngat ma-sam.', emoji: '🍋' }
@@ -794,7 +783,23 @@
     ];
 
     function stripHyphens(text) {
-        return text.replace(/-/g, '');
+        return text ? text.replace(/-/g, '') : '';
+    }
+
+    function renderColoredHyphenatedText(text) {
+        if (!text) return '';
+        const words = text.split(' ');
+        const colors = ['syl-c1', 'syl-c2', 'syl-c3', 'syl-c4'];
+        
+        return words.map(word => {
+            const parts = word.split('-');
+            if (parts.length === 1) return word;
+            
+            return parts.map((part, idx) => {
+                const colorClass = colors[idx % colors.length];
+                return `<span class="${colorClass}">${part}</span>`;
+            }).join('');
+        }).join(' ');
     }
 
     function stopAllAudio() {
@@ -830,6 +835,64 @@
     document.addEventListener('click', unlockAudioEngine, { passive: true });
     document.addEventListener('touchstart', unlockAudioEngine, { passive: true });
 
+    function getMalayVoice() {
+        if (!('speechSynthesis' in window)) return null;
+        const voices = window.speechSynthesis.getVoices();
+        // Cari strictly Bahasa Melayu, pastikan bukan suara Bahasa Indonesia atau Bahasa Inggeris
+        let msVoice = voices.find(v => {
+            const lang = (v.lang || '').toLowerCase();
+            const name = (v.name || '').toLowerCase();
+            return (lang.startsWith('ms') || name.includes('malay') || name.includes('melayu')) && 
+                   !lang.includes('id') && !name.includes('indonesia') && !name.includes('english');
+        });
+        return msVoice || null;
+    }
+
+    function speakSentenceOnline(text, onComplete) {
+        if (activeOnlineAudio) {
+            activeOnlineAudio.pause();
+            activeOnlineAudio.onended = null;
+            activeOnlineAudio.onerror = null;
+            activeOnlineAudio = null;
+        }
+        const cleanText = text.trim();
+        if (!cleanText) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        const encoded = encodeURIComponent(cleanText);
+        // Google Translate TTS Malay Female Voice (Standard Malay Pronunciation)
+        const onlineUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ms&q=${encoded}`;
+
+        activeOnlineAudio = new Audio(onlineUrl);
+        activeOnlineAudio.playbackRate = 0.9;
+
+        let hasEnded = false;
+
+        const done = () => {
+            if (hasEnded) return;
+            hasEnded = true;
+            if (window.currentSafetyTimer) {
+                clearTimeout(window.currentSafetyTimer);
+                window.currentSafetyTimer = null;
+            }
+            if (onComplete) setTimeout(onComplete, 200);
+        };
+
+        activeOnlineAudio.onended = done;
+        activeOnlineAudio.onerror = done;
+
+        window.currentSafetyTimer = setTimeout(done, Math.max(3000, cleanText.length * 150));
+
+        let p = activeOnlineAudio.play();
+        if (p !== undefined) {
+            p.catch(() => {
+                done();
+            });
+        }
+    }
+
     function playSequentialSentences(sentences) {
         stopAllAudio();
         unlockAudioEngine();
@@ -851,24 +914,16 @@
             const sentenceText = cleanSentences[speechQueueIndex];
             speechQueueIndex++;
 
-            if ('speechSynthesis' in window) {
+            const msVoice = getMalayVoice();
+
+            // Jika peranti ada suara Bahasa Melayu asli, guna Web Speech API. 
+            // Jika tiada (atau pelayar desktop guna slang English), guna Google Malay TTS secara langsung.
+            if (msVoice && 'speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
 
                 const utterance = new SpeechSynthesisUtterance(sentenceText);
-                const voices = window.speechSynthesis.getVoices();
-
-                // Cari hanya suara Bahasa Melayu (ms / ms-MY), elakkan bahasa Indonesia (id)
-                let voice = voices.find(v => {
-                    const l = v.lang.toLowerCase();
-                    return (l.includes('ms') || l.includes('melayu')) && !l.includes('id');
-                });
-
-                if (voice) {
-                    utterance.voice = voice;
-                    utterance.lang = voice.lang;
-                } else {
-                    utterance.lang = 'ms-MY';
-                }
+                utterance.voice = msVoice;
+                utterance.lang = msVoice.lang;
                 utterance.rate = 0.85;
 
                 let hasFinished = false;
@@ -915,44 +970,6 @@
         }
 
         speakNextSentence();
-    }
-
-    function speakSentenceOnline(text, onComplete) {
-        if (activeOnlineAudio) {
-            activeOnlineAudio.pause();
-            activeOnlineAudio.onended = null;
-            activeOnlineAudio.onerror = null;
-            activeOnlineAudio = null;
-        }
-        const encoded = encodeURIComponent(text);
-        const onlineUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ms&q=${encoded}`;
-
-        activeOnlineAudio = new Audio(onlineUrl);
-        activeOnlineAudio.playbackRate = 0.85;
-
-        let hasEnded = false;
-
-        const done = () => {
-            if (hasEnded) return;
-            hasEnded = true;
-            if (window.currentSafetyTimer) {
-                clearTimeout(window.currentSafetyTimer);
-                window.currentSafetyTimer = null;
-            }
-            if (onComplete) setTimeout(onComplete, 200);
-        };
-
-        activeOnlineAudio.onended = done;
-        activeOnlineAudio.onerror = done;
-
-        window.currentSafetyTimer = setTimeout(done, Math.max(3000, text.length * 150));
-
-        let p = activeOnlineAudio.play();
-        if (p !== undefined) {
-            p.catch(() => {
-                done();
-            });
-        }
     }
 
     function speakText(text) {
@@ -1449,6 +1466,12 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+        // Pre-load Web Speech API voices if available
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
         switchSkill(1);
     });
 </script>
