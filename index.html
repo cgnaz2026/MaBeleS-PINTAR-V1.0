@@ -427,12 +427,13 @@
             line-height: 1.5;
         }
 
-        /* Warna Suku Kata Bagi Modul 8 & 9 */
+        /* Warna Suku Kata Bagi Modul 3-9 */
         .syl-c1 { color: #1565C0; font-weight: bold; } /* Biru */
         .syl-c2 { color: #D32F2F; font-weight: bold; } /* Merah */
         .syl-c3 { color: #2E7D32; font-weight: bold; } /* Hijau */
         .syl-c4 { color: #6A1B9A; font-weight: bold; } /* Ungu */
 
+        /* Butang Speaker dengan Status Main/Henti */
         .btn-speaker-only {
             background: #8E24AA;
             color: white;
@@ -453,6 +454,17 @@
         .btn-speaker-only:hover {
             background: #AB47BC;
             transform: scale(1.1);
+        }
+
+        .btn-speaker-only.playing {
+            background: #E53935 !important;
+            box-shadow: 0 4px 0 #B71C1C !important;
+            animation: speakerRipple 0.8s infinite alternate;
+        }
+
+        @keyframes speakerRipple {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.6), 0 4px 0 #B71C1C; }
+            100% { transform: scale(1.12); box-shadow: 0 0 0 10px rgba(229, 57, 53, 0), 0 4px 0 #B71C1C; }
         }
 
         .modal-overlay {
@@ -652,7 +664,7 @@
 <div id="toast" class="toast">Syabas! Jawapan Betul! 🎉</div>
 
 <script>
-    /* Pemboleh Ubah Global & Status Aplikasi */
+    /* Status & Pemboleh Ubah Global */
     let currentSkill = 1;
     let currentModul1Tab = 'vokal';
     let score = 0;
@@ -671,6 +683,10 @@
     // Audio Player Bagi Kata Single / Ayat Pendek
     const singleAudioPlayer = new Audio();
 
+    // Penjejak Audio & Butang Aktif Bagi Fungsi Main/Henti
+    let currentPlayingId = null;
+    let activeSpeakerBtnEl = null;
+
     const svgMeja = `<svg width="54" height="54" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="56" height="10" rx="2" fill="#8D6E63" stroke="#4E342E" stroke-width="2"/><rect x="10" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="48" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="20" y="30" width="5" height="18" fill="#5D4037"/><rect x="39" y="30" width="5" height="18" fill="#5D4037"/></svg>`;
 
     /* Datasets Modul 1 dengan Audio Sebutan & Bunyi Vokal Asli */
@@ -687,13 +703,13 @@
 
     const listKV = ['ba','bi','bu','ca','ci','cu','da','di','du','fa','gi','gu','ha','hi','hu','ja','ji','ju','ka','ki','ku','la','li','lu','ma'];
 
+    /* MODUL 3: Suku Kata Terbuka (11 Perkataan Baru) */
     const listSKTerbuka = [
         { word: 'ubi', syllables: ['u', 'bi'], emoji: '🍠' },
         { word: 'api', syllables: ['a', 'pi'], emoji: '🔥' },
         { word: 'meja', syllables: ['me', 'ja'], emoji: svgMeja },
         { word: 'bola', syllables: ['bo', 'la'], emoji: '⚽' },
         { word: 'mata', syllables: ['ma', 'ta'], emoji: '👁️' },
-        { word: 'guli', syllables: ['gu', 'li'], emoji: '🔮' },
         { word: 'kereta', syllables: ['ke', 're', 'ta'], emoji: '🚗' },
         { word: 'tomato', syllables: ['to', 'ma', 'to'], emoji: '🍅' },
         { word: 'bateri', syllables: ['ba', 'te', 'ri'], emoji: '🔋' },
@@ -702,29 +718,44 @@
         { word: 'kemeja', syllables: ['ke', 'me', 'ja'], emoji: '👔' }
     ];
 
+    /* MODUL 4: Suku Kata KVK (15 Perkataan Baru) */
     const listKVK = [
         { word: 'kek', syllables: ['kek'], emoji: '🍰' },
         { word: 'jam', syllables: ['jam'], emoji: '⏰' },
-        { word: 'bas', syllables: ['bas'], emoji: '🚌' },
-        { word: 'beg', syllables: ['beg'], emoji: '🎒' },
-        { word: 'cat', syllables: ['cat'], emoji: '🎨' },
-        { word: 'pin', syllables: ['pin'], emoji: '📌' },
-        { word: 'zip', syllables: ['zip'], emoji: '🤐' },
-        { word: 'bot', syllables: ['bot'], emoji: '🚤' },
-        { word: 'mop', syllables: ['mop'], emoji: '🧹' },
-        { word: 'van', syllables: ['van'], emoji: '🚐' }
+        { word: 'pen', syllables: ['pen'], emoji: '🖊️' },
+        { word: 'kasut', syllables: ['ka', 'sut'], emoji: '👟' },
+        { word: 'pokok', syllables: ['po', 'kok'], emoji: '🌳' },
+        { word: 'kunci', syllables: ['kun', 'ci'], emoji: '🔑' },
+        { word: 'baldi', syllables: ['bal', 'di'], emoji: '🪣' },
+        { word: 'ketam', syllables: ['ke', 'tam'], emoji: '🦀' },
+        { word: 'telur', syllables: ['te', 'lur'], emoji: '🥚' },
+        { word: 'sampan', syllables: ['sam', 'pan'], emoji: '🚣' },
+        { word: 'pensel', syllables: ['pen', 'sel'], emoji: '✏️' },
+        { word: 'rambutan', syllables: ['ram', 'bu', 'tan'], emoji: '🍈' },
+        { word: 'pembaris', syllables: ['pem', 'ba', 'ris'], emoji: '📏' },
+        { word: 'basikal', syllables: ['ba', 'si', 'kal'], emoji: '🚲' },
+        { word: 'zirafah', syllables: ['zi', 'ra', 'fah'], emoji: '🦒' }
     ];
 
+    /* MODUL 5: Suku Kata KVKK (14 Perkataan Baru) */
     const listKVKK = [
-        { word: 'bank', syllables: ['bank'], emoji: '🏦' },
-        { word: 'zink', syllables: ['zink'], emoji: '🏠' },
-        { word: 'tang', syllables: ['tang'], emoji: '🔧' },
-        { word: 'gong', syllables: ['gong'], emoji: '🥁' },
-        { word: 'wang', syllables: ['wang'], emoji: '💵' },
-        { word: 'ring', syllables: ['ring'], emoji: '🔔' }
+        { word: 'tong', syllables: ['tong'], emoji: '🛢️' },
+        { word: 'pisang', syllables: ['pi', 'sang'], emoji: '🍌' },
+        { word: 'sotong', syllables: ['so', 'tong'], emoji: '🦑' },
+        { word: 'jagung', syllables: ['ja', 'gung'], emoji: '🌽' },
+        { word: 'kucing', syllables: ['ku', 'cing'], emoji: '🐱' },
+        { word: 'kambing', syllables: ['kam', 'bing'], emoji: '🐐' },
+        { word: 'kentang', syllables: ['ken', 'tang'], emoji: '🥔' },
+        { word: 'tanglung', syllables: ['tang', 'lung'], emoji: '🏮' },
+        { word: 'senapang', syllables: ['se', 'na', 'pang'], emoji: '🔫' },
+        { word: 'tangga', syllables: ['tang', 'ga'], emoji: '🪜' },
+        { word: 'belalang', syllables: ['be', 'la', 'lang'], emoji: '🦗' },
+        { word: 'tingkap', syllables: ['ting', 'kap'], emoji: '🪟' },
+        { word: 'mangkuk', syllables: ['mang', 'kuk'], emoji: '🥣' },
+        { word: 'mangga', syllables: ['mang', 'ga'], emoji: '🥭' }
     ];
 
-    /* MODUL 6: Diftong & Vokal Berganding (Kemaskini 12 Perkataan Baru) */
+    /* MODUL 6: Diftong & Vokal Berganding (12 Perkataan Baru) */
     const listDiftong = [
         { word: 'kedai', syllables: ['ke', 'dai'], emoji: '🏪' },
         { word: 'pantai', syllables: ['pan', 'tai'], emoji: '🏖️' },
@@ -740,7 +771,7 @@
         { word: 'duit', syllables: ['du', 'it'], emoji: '💵' }
     ];
 
-    /* MODUL 7: Digraf & Konsonan Bergabung (Kemaskini 12 Perkataan Baru) */
+    /* MODUL 7: Digraf & Konsonan Bergabung (12 Perkataan Baru) */
     const listDigraf = [
         { word: 'penyu', syllables: ['pe', 'nyu'], emoji: '🐢' },
         { word: 'bunga', syllables: ['bu', 'nga'], emoji: '🌸' },
@@ -820,6 +851,7 @@
         return text.replace(/--/g, ' ~ ').replace(/-/g, '').replace(/ ~ /g, '-');
     }
 
+    /* Menterjemah Teks Sengkang Kepada HTML Berwarna Suku Kata */
     function renderColoredHyphenatedText(hyphenatedText) {
         if (!hyphenatedText) return '';
         const colors = ['syl-c1', 'syl-c2', 'syl-c3', 'syl-c4'];
@@ -852,10 +884,25 @@
         }).join(' ');
     }
 
+    /* Helper Pewarnaan Suku Kata Berasaskan Array Suku Kata Bagi Modul 3 hingga 7 */
+    function renderColoredSyllablesHTML(syllables) {
+        if (!syllables || !Array.isArray(syllables)) return '';
+        const colors = ['syl-c1', 'syl-c2', 'syl-c3', 'syl-c4'];
+        return syllables.map((syl, idx) => `<span class="${colors[idx % colors.length]}">${syl}</span>`).join('');
+    }
+
+    /* FUNGSI MENGHENTIKAN SEMUA AUDIO & MENGEMBALIKAN BUTANG KE STATUS ASAL */
     function stopAllAudio() {
         isPlayingPassage = false;
         currentPassageList = [];
         currentPassageIdx = 0;
+        currentPlayingId = null;
+
+        if (activeSpeakerBtnEl) {
+            activeSpeakerBtnEl.classList.remove('playing');
+            activeSpeakerBtnEl.innerText = '🔊';
+            activeSpeakerBtnEl = null;
+        }
 
         if (passageTimer) {
             clearTimeout(passageTimer);
@@ -872,6 +919,8 @@
         try {
             singleAudioPlayer.pause();
             singleAudioPlayer.currentTime = 0;
+            singleAudioPlayer.onended = null;
+            singleAudioPlayer.onerror = null;
         } catch(e) {}
 
         if ('speechSynthesis' in window) {
@@ -903,15 +952,111 @@
     document.addEventListener('click', unlockAudioEngine, { passive: true });
     document.addEventListener('touchstart', unlockAudioEngine, { passive: true });
 
-    /* ENJIN PEMBACAAN PETIKAN PEMAHAMAN PENUH KEMAHIRAN 9 */
-    function playLongPassage(hyphenatedText) {
-        stopAllAudio();
+    /* FUNGSI TOGGLE PLAY / STOP UTAMA */
+    function togglePlayAudio(audioId, btnEl, actionType, textData, extraData = null) {
         unlockAudioEngine();
 
+        if (currentPlayingId === audioId) {
+            stopAllAudio();
+            return;
+        }
+
+        stopAllAudio();
+
+        currentPlayingId = audioId;
+        activeSpeakerBtnEl = btnEl;
+
+        if (btnEl) {
+            btnEl.classList.add('playing');
+            btnEl.innerText = '⏹️';
+        }
+
+        if (actionType === 'passage') {
+            playLongPassageProcess(textData);
+        } else if (actionType === 'spelling') {
+            spellAndSayWordProcess(textData, extraData);
+        } else if (actionType === 'direct') {
+            speakTextProcess(textData);
+        }
+    }
+
+    function toggleModuleSpellingAudio(skillNum, idx, btnEl) {
+        const audioId = `m${skillNum}_card_${idx}`;
+        if (currentPlayingId === audioId) {
+            stopAllAudio();
+            return;
+        }
+        stopAllAudio();
+
+        currentPlayingId = audioId;
+        activeSpeakerBtnEl = btnEl;
+        if (btnEl) {
+            btnEl.classList.add('playing');
+            btnEl.innerText = '⏹️';
+        }
+
+        let dataset;
+        switch(skillNum) {
+            case 3: dataset = listSKTerbuka; break;
+            case 4: dataset = listKVK; break;
+            case 5: dataset = listKVKK; break;
+            case 6: dataset = listDiftong; break;
+            case 7: dataset = listDigraf; break;
+        }
+        if (dataset && dataset[idx]) {
+            spellAndSayWordProcess(dataset[idx].word, dataset[idx].syllables);
+        }
+    }
+
+    function toggleAyatAudio(idx, btnEl) {
+        const audioId = `m8_ayat_${idx}`;
+        if (currentPlayingId === audioId) {
+            stopAllAudio();
+            return;
+        }
+        stopAllAudio();
+
+        currentPlayingId = audioId;
+        activeSpeakerBtnEl = btnEl;
+        if (btnEl) {
+            btnEl.classList.add('playing');
+            btnEl.innerText = '⏹️';
+        }
+
+        let plainText = stripHyphens(listAyatData[idx].hyphenated);
+        speakTextProcess(plainText);
+    }
+
+    function togglePassageAudio(pIdx, btnEl) {
+        const audioId = `m9_passage_${pIdx}`;
+        if (currentPlayingId === audioId) {
+            stopAllAudio();
+            return;
+        }
+        stopAllAudio();
+
+        currentPlayingId = audioId;
+        activeSpeakerBtnEl = btnEl;
+        if (btnEl) {
+            btnEl.classList.add('playing');
+            btnEl.innerText = '⏹️';
+        }
+
+        if (listPemahamanData[pIdx]) {
+            playLongPassageProcess(listPemahamanData[pIdx].hyphenatedPassage);
+        }
+    }
+
+    /* ENJIN PEMBACAAN PETIKAN PEMAHAMAN PENUH KEMAHIRAN 9 */
+    function playLongPassageProcess(hyphenatedText) {
         let plainText = stripHyphens(hyphenatedText);
+
         let sentences = plainText.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 0);
 
-        if (sentences.length === 0) return;
+        if (sentences.length === 0) {
+            stopAllAudio();
+            return;
+        }
 
         currentPassageList = sentences;
         currentPassageIdx = 0;
@@ -922,7 +1067,7 @@
 
     function playSentenceAtIndex(index) {
         if (!isPlayingPassage || index >= currentPassageList.length) {
-            isPlayingPassage = false;
+            stopAllAudio();
             return;
         }
 
@@ -936,63 +1081,38 @@
         passageAudio.src = url;
         passageAudio.currentTime = 0;
 
-        let hasCalledNext = false;
-        function nextSentence() {
-            if (hasCalledNext) return;
-            hasCalledNext = true;
-            if (passageTimer) {
-                clearTimeout(passageTimer);
-                passageTimer = null;
-            }
-
-            if (isPlayingPassage) {
-                setTimeout(() => {
-                    if (isPlayingPassage) {
-                        playSentenceAtIndex(index + 1);
-                    }
-                }, 250);
-            }
-        }
-
-        passageAudio.onended = nextSentence;
-
-        passageAudio.onerror = function() {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.resume();
-                window.speechSynthesis.cancel();
-                let utt = new SpeechSynthesisUtterance(text);
-                utt.lang = 'ms-MY';
-                utt.rate = 0.85;
-                utt.onend = nextSentence;
-                utt.onerror = nextSentence;
-                window.speechSynthesis.speak(utt);
-            } else {
-                nextSentence();
-            }
+        passageAudio.onended = function() {
+            if (!isPlayingPassage) return;
+            setTimeout(() => {
+                if (isPlayingPassage) {
+                    playSentenceAtIndex(index + 1);
+                }
+            }, 200);
         };
 
-        let estimatedDuration = Math.max(3500, text.length * 150 + 2000);
-        if (passageTimer) clearTimeout(passageTimer);
-        passageTimer = setTimeout(() => {
-            if (!hasCalledNext && isPlayingPassage) {
-                nextSentence();
-            }
-        }, estimatedDuration);
+        passageAudio.onerror = function() {
+            if (!isPlayingPassage) return;
+            setTimeout(() => {
+                if (isPlayingPassage) {
+                    playSentenceAtIndex(index + 1);
+                }
+            }, 300);
+        };
 
-        let playPromise = passageAudio.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(err => {
-                passageAudio.onerror();
+        let p = passageAudio.play();
+        if (p !== undefined) {
+            p.catch(() => {
+                fallbackWebSpeech(text, () => {
+                    if (isPlayingPassage) {
+                        setTimeout(() => playSentenceAtIndex(index + 1), 200);
+                    }
+                });
             });
         }
     }
 
     /* Pembacaan Satu Ayat / Perkataan Ringkas */
-    function speakText(text) {
-        if (!text) return;
-        unlockAudioEngine();
-        stopAllAudio();
-
+    function speakTextProcess(text) {
         let cleanText = stripHyphens(text).trim();
 
         let encoded = encodeURIComponent(cleanText);
@@ -1001,16 +1121,31 @@
         singleAudioPlayer.src = onlineUrl;
         singleAudioPlayer.playbackRate = 0.88;
 
+        singleAudioPlayer.onended = function() {
+            stopAllAudio();
+        };
+
+        singleAudioPlayer.onerror = function() {
+            fallbackWebSpeech(cleanText, () => {
+                stopAllAudio();
+            });
+        };
+
         let p = singleAudioPlayer.play();
         if (p !== undefined) {
             p.catch(() => {
-                fallbackWebSpeech(cleanText);
+                fallbackWebSpeech(cleanText, () => {
+                    stopAllAudio();
+                });
             });
         }
     }
 
-    function fallbackWebSpeech(text) {
-        if (!('speechSynthesis' in window)) return;
+    function fallbackWebSpeech(text, onEndCb) {
+        if (!('speechSynthesis' in window)) {
+            if (onEndCb) onEndCb();
+            return;
+        }
         window.speechSynthesis.resume();
         window.speechSynthesis.cancel();
 
@@ -1024,14 +1159,21 @@
         utterance.lang = 'ms-MY';
         utterance.rate = 0.85;
 
+        utterance.onend = function() {
+            if (onEndCb) onEndCb();
+        };
+        utterance.onerror = function() {
+            if (onEndCb) onEndCb();
+        };
+
         window.speechSynthesis.speak(utterance);
     }
 
     /* Fungsi Audio Mengeja Dan Menyebut Bagi Kemahiran 2 hingga 7 */
-    function spellAndSayWord(word, syllables) {
+    function spellAndSayWordProcess(word, syllables) {
         if (!syllables || !Array.isArray(syllables) || syllables.length === 0) {
             let spelled = word.split('').join(', ') + `, ${word}`;
-            speakText(spelled);
+            speakTextProcess(spelled);
             return;
         }
 
@@ -1046,7 +1188,7 @@
         });
 
         let fullSpellingString = `${parts.join('. ')}. ${word}.`;
-        speakText(fullSpellingString);
+        speakTextProcess(fullSpellingString);
     }
 
     /* Web Audio Sound FX */
@@ -1146,6 +1288,7 @@
 
     /* Penukar Modul Utama */
     function switchSkill(skillNum) {
+        stopAllAudio();
         currentSkill = skillNum;
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.classList.toggle('active', parseInt(btn.dataset.skill) === skillNum);
@@ -1169,6 +1312,7 @@
 
     /* Penukar Sub-Tab Modul 1 */
     function switchModul1Tab(tabType, btnEl) {
+        stopAllAudio();
         currentModul1Tab = tabType;
         document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
         if (btnEl) btnEl.classList.add('active');
@@ -1256,14 +1400,14 @@
         main.innerHTML = html;
     }
 
-    function renderSkill3() { renderWordListModule('📖', 'Modul 3: Perkataan Suku Kata Terbuka', listSKTerbuka); }
-    function renderSkill4() { renderWordListModule('📦', 'Modul 4: Suku Kata KVK', listKVK); }
-    function renderSkill5() { renderWordListModule('🔔', 'Modul 5: Suku Kata KVKK', listKVKK); }
-    function renderSkill6() { renderWordListModule('🍇', 'Modul 6: Diftong & Vokal Berganding', listDiftong); }
-    function renderSkill7() { renderWordListModule('🎺', 'Modul 7: Digraf & Konsonan Bergabung', listDigraf); }
+    function renderSkill3() { renderWordListModule('📖', 'Modul 3: Perkataan Suku Kata Terbuka', listSKTerbuka, 3); }
+    function renderSkill4() { renderWordListModule('📦', 'Modul 4: Suku Kata KVK', listKVK, 4); }
+    function renderSkill5() { renderWordListModule('🔔', 'Modul 5: Suku Kata KVKK', listKVKK, 5); }
+    function renderSkill6() { renderWordListModule('🍇', 'Modul 6: Diftong & Vokal Berganding', listDiftong, 6); }
+    function renderSkill7() { renderWordListModule('🎺', 'Modul 7: Digraf & Konsonan Bergabung', listDigraf, 7); }
 
-    /* Kad Bagi Modul 3 hingga 7 */
-    function renderWordListModule(icon, title, dataset) {
+    /* Kad Bagi Modul 3 hingga 7 (Dengan Pewarnaan Suku Kata Yang Berbeza) */
+    function renderWordListModule(icon, title, dataset, moduleSkillNum) {
         const main = document.getElementById('mainContent');
         let html = `
             <div class="section-header">
@@ -1271,22 +1415,18 @@
             </div>
         `;
 
-        dataset.forEach(item => {
-            const displaySyllables = item.syllables.map(s => {
-                if (s.length === 1) return `<span class="vokal">${s}</span>`;
-                return `<span class="konsonan">${s[0]}</span><span class="vokal">${s.slice(1)}</span>`;
-            }).join('-');
-
-            const sylJson = JSON.stringify(item.syllables).replace(/"/g, '&quot;');
+        dataset.forEach((item, idx) => {
+            const displayColoredSyllables = renderColoredSyllablesHTML(item.syllables);
+            const audioId = `m${moduleSkillNum}_card_${idx}`;
 
             html += `
-                <div class="word-display-card" onclick="openCardModalSpelling('${item.word}', 'Ejaan: ${item.syllables.join(' - ')}', '${item.emoji}', '${item.word}', ${sylJson})">
+                <div class="word-display-card" onclick="openCardModalSpelling('${item.word}', 'Ejaan: ${item.syllables.join(' - ')}', '${item.emoji}', ${moduleSkillNum}, ${idx})">
                     <div class="word-visual">${item.emoji}</div>
                     <div class="word-details">
-                        <div class="word-syllables">${displaySyllables}</div>
+                        <div class="word-syllables">${displayColoredSyllables}</div>
                         <div style="color:#777; font-size:0.9rem; text-transform:capitalize;">${item.word}</div>
                     </div>
-                    <button class="btn-speaker-only" onclick="event.stopPropagation(); spellAndSayWord('${item.word}', ${sylJson})">🔊</button>
+                    <button id="${audioId}" class="btn-speaker-only" onclick="event.stopPropagation(); toggleModuleSpellingAudio(${moduleSkillNum}, ${idx}, this)">🔊</button>
                 </div>
             `;
         });
@@ -1304,9 +1444,9 @@
             <p style="margin-bottom:15px; font-weight:bold; color:#2E7D32;">Baca ayat-ayat di bawah ini:</p>
         `;
 
-        listAyatData.forEach((item) => {
+        listAyatData.forEach((item, idx) => {
             let coloredSentence = renderColoredHyphenatedText(item.hyphenated);
-            let plainText = stripHyphens(item.hyphenated);
+            let audioId = `m8_ayat_${idx}`;
 
             html += `
                 <div class="word-display-card">
@@ -1314,7 +1454,7 @@
                     <div class="word-details">
                         <div style="font-size:1.35rem; line-height:1.6;">${coloredSentence}</div>
                     </div>
-                    <button class="btn-speaker-only" onclick="speakText('${plainText.replace(/'/g, "\\'")}')">🔊</button>
+                    <button id="${audioId}" class="btn-speaker-only" onclick="toggleAyatAudio(${idx}, this)">🔊</button>
                 </div>
             `;
         });
@@ -1334,13 +1474,14 @@
 
         listPemahamanData.forEach((item, pIdx) => {
             let paragraphs = item.hyphenatedPassage.split('\n\n').map(p => renderColoredHyphenatedText(p)).join('<br><br>');
+            let audioId = `m9_passage_${pIdx}`;
 
             html += `
                 <div class="passage-card-wrapper">
                     <div class="passage-box">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:2px dashed #A5D6A7; padding-bottom:8px;">
                             <strong style="color:#2E7D32; font-size:1.3rem;">${item.emoji} ${item.title}</strong>
-                            <button class="btn-speaker-only" onclick="playPassageAudio(${pIdx})">🔊</button>
+                            <button id="${audioId}" class="btn-speaker-only" onclick="togglePassageAudio(${pIdx}, this)">🔊</button>
                         </div>
                         <div>${paragraphs}</div>
                     </div>
@@ -1371,11 +1512,6 @@
         main.innerHTML = html;
     }
 
-    function playPassageAudio(idx) {
-        if (!listPemahamanData[idx]) return;
-        playLongPassage(listPemahamanData[idx].hyphenatedPassage);
-    }
-
     function checkAnswer(btn, isCorrect) {
         if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
 
@@ -1399,6 +1535,7 @@
 
     /* Modal Pop-up Biasa (Modul 1 & 2) */
     function openCardModal(bigText, subText, emoji, directAudio) {
+        stopAllAudio();
         document.getElementById('modalBigDisplay').innerText = bigText;
         document.getElementById('modalSubText').innerText = subText || '';
         document.getElementById('modalEmoji').innerHTML = emoji || '⭐';
@@ -1406,13 +1543,17 @@
         const modal = document.getElementById('cardModal');
         modal.classList.add('active');
 
-        document.getElementById('modalSpeakerBtn').onclick = () => speakText(directAudio);
+        const modalBtn = document.getElementById('modalSpeakerBtn');
+        const modalAudioId = 'modal_audio_direct';
 
-        speakText(directAudio);
+        modalBtn.onclick = () => togglePlayAudio(modalAudioId, modalBtn, 'direct', directAudio);
+
+        togglePlayAudio(modalAudioId, modalBtn, 'direct', directAudio);
     }
 
     /* Modal Pop-up Ejaan (Modul 3 hingga 7) */
-    function openCardModalSpelling(bigText, subText, emoji, word, syllables) {
+    function openCardModalSpelling(bigText, subText, emoji, skillNum, idx) {
+        stopAllAudio();
         document.getElementById('modalBigDisplay').innerText = bigText;
         document.getElementById('modalSubText').innerText = subText || '';
         document.getElementById('modalEmoji').innerHTML = emoji || '⭐';
@@ -1420,9 +1561,35 @@
         const modal = document.getElementById('cardModal');
         modal.classList.add('active');
 
-        document.getElementById('modalSpeakerBtn').onclick = () => spellAndSayWord(word, syllables);
+        const modalBtn = document.getElementById('modalSpeakerBtn');
+        const modalAudioId = 'modal_audio_spelling';
 
-        spellAndSayWord(word, syllables);
+        modalBtn.onclick = () => {
+            if (currentPlayingId === modalAudioId) {
+                stopAllAudio();
+                return;
+            }
+            stopAllAudio();
+
+            currentPlayingId = modalAudioId;
+            activeSpeakerBtnEl = modalBtn;
+            modalBtn.classList.add('playing');
+            modalBtn.innerText = '⏹️';
+
+            let dataset;
+            switch(skillNum) {
+                case 3: dataset = listSKTerbuka; break;
+                case 4: dataset = listKVK; break;
+                case 5: dataset = listKVKK; break;
+                case 6: dataset = listDiftong; break;
+                case 7: dataset = listDigraf; break;
+            }
+            if (dataset && dataset[idx]) {
+                spellAndSayWordProcess(dataset[idx].word, dataset[idx].syllables);
+            }
+        };
+
+        modalBtn.onclick();
     }
 
     function closeCardModal(e) {
