@@ -661,14 +661,15 @@
     let musicInterval = null;
     let isAudioUnlocked = false;
 
-    // Objek Audio Global Khas Bagi Pembacaan Petikan
-    const passageAudioPlayer = new Audio();
-    let passageSentences = [];
-    let passageSentenceIndex = 0;
-    let isReadingPassage = false;
+    // Enjin Rantaian Audio Kalis Terputus Bagi Petikan Pemahaman Modul 9
+    const passageAudio = new Audio();
+    let currentPassageList = [];
+    let currentPassageIdx = 0;
+    let isPlayingPassage = false;
+    let passageTimer = null;
 
-    // Single Word / Short Text Audio Player
-    let singleAudioPlayer = new Audio();
+    // Audio Player Bagi Kata Single / Ayat Pendek
+    const singleAudioPlayer = new Audio();
 
     const svgMeja = `<svg width="54" height="54" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="56" height="10" rx="2" fill="#8D6E63" stroke="#4E342E" stroke-width="2"/><rect x="10" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="48" y="30" width="6" height="26" fill="#6D4C41" stroke="#3E2723" stroke-width="1.5"/><rect x="20" y="30" width="5" height="18" fill="#5D4037"/><rect x="39" y="30" width="5" height="18" fill="#5D4037"/></svg>`;
 
@@ -723,24 +724,36 @@
         { word: 'ring', syllables: ['ring'], emoji: '🔔' }
     ];
 
+    /* MODUL 6: Diftong & Vokal Berganding (Kemaskini 12 Perkataan Baru) */
     const listDiftong = [
-        { word: 'paip', syllables: ['pa', 'ip'], emoji: '🚰' },
-        { word: 'kain', syllables: ['ka', 'in'], emoji: '🧵' },
-        { word: 'daun', syllables: ['da', 'un'], emoji: '🍃' },
-        { word: 'kuih', syllables: ['ku', 'ih'], emoji: '🥮' },
-        { word: 'tuala', syllables: ['tu', 'a', 'la'], emoji: '🧴' },
+        { word: 'kedai', syllables: ['ke', 'dai'], emoji: '🏪' },
+        { word: 'pantai', syllables: ['pan', 'tai'], emoji: '🏖️' },
+        { word: 'tembikai', syllables: ['tem', 'bi', 'kai'], emoji: '🍉' },
+        { word: 'harimau', syllables: ['ha', 'ri', 'mau'], emoji: '🐅' },
         { word: 'limau', syllables: ['li', 'mau'], emoji: '🍋' },
-        { word: 'pisau', syllables: ['pi', 'sau'], emoji: '🔪' },
-        { word: 'pulau', syllables: ['pu', 'lau'], emoji: '🏝️' }
+        { word: 'buaya', syllables: ['bu', 'a', 'ya'], emoji: '🐊' },
+        { word: 'seluar', syllables: ['se', 'lu', 'ar'], emoji: '👖' },
+        { word: 'kuih', syllables: ['ku', 'ih'], emoji: '🥮' },
+        { word: 'daun', syllables: ['da', 'un'], emoji: '🍃' },
+        { word: 'piano', syllables: ['pi', 'a', 'no'], emoji: '🎹' },
+        { word: 'hadiah', syllables: ['ha', 'di', 'ah'], emoji: '🎁' },
+        { word: 'duit', syllables: ['du', 'it'], emoji: '💵' }
     ];
 
+    /* MODUL 7: Digraf & Konsonan Bergabung (Kemaskini 12 Perkataan Baru) */
     const listDigraf = [
-        { word: 'nyamuk', syllables: ['nya', 'muk'], emoji: '🦟' },
         { word: 'penyu', syllables: ['pe', 'nyu'], emoji: '🐢' },
         { word: 'bunga', syllables: ['bu', 'nga'], emoji: '🌸' },
+        { word: 'penyapu', syllables: ['pe', 'nya', 'pu'], emoji: '🧹' },
+        { word: 'singa', syllables: ['si', 'nga'], emoji: '🦁' },
+        { word: 'monyet', syllables: ['mo', 'nyet'], emoji: '🐒' },
         { word: 'syampu', syllables: ['syam', 'pu'], emoji: '🧴' },
-        { word: 'khemah', syllables: ['khe', 'mah'], emoji: '⛺' },
-        { word: 'telinga', syllables: ['te', 'li', 'nga'], emoji: '👂' }
+        { word: 'nyamuk', syllables: ['nya', 'muk'], emoji: '🦟' },
+        { word: 'skuter', syllables: ['sku', 'ter'], emoji: '🛵' },
+        { word: 'troli', syllables: ['tro', 'li'], emoji: '🛒' },
+        { word: 'dram', syllables: ['dram'], emoji: '🥁' },
+        { word: 'klinik', syllables: ['kli', 'nik'], emoji: '🏥' },
+        { word: 'krayon', syllables: ['kra', 'yon'], emoji: '🖍️' }
     ];
 
     /* MODUL 8: Teks Bertanda Suku Kata Tepat (Kemahiran 31 - Dari Gambar 121752.jpg) */
@@ -748,7 +761,7 @@
         { num: 1, hyphenated: 'A-bang ber-ja-lan ka-ki ke se-ko-lah.', emoji: '🏫' },
         { num: 2, hyphenated: 'Sal-mi me-no-long i-bu-nya me-na-nam po-kok bu-nga.', emoji: '🌸' },
         { num: 3, hyphenated: 'Da-ni dan a-dik-nya per-gi me-man-cing i-kan.', emoji: '🎣' },
-        { num: 4, hyphenated: 'Mu-rid-mu-rid ber-a-tur ke-ti-ka mem-be-li ma-ka-nan di kan-tin.', emoji: '🍱' },
+        { num: 4, hyphenated: 'Mu-rid--mu-rid ber-a-tur ke-ti-ka mem-be-li ma-ka-nan di kan-tin.', emoji: '🍱' },
         { num: 5, hyphenated: 'Da-tuk dan ne-nek ting-gal di kam-pung.', emoji: '🏡' },
         { num: 6, hyphenated: 'Di ru-mah A-nis a-da ko-lam re-nang.', emoji: '🏊' },
         { num: 7, hyphenated: 'Bu-ah li-mau i-tu sa-ngat ma-sam.', emoji: '🍋' }
@@ -758,7 +771,7 @@
     const listPemahamanData = [
         {
             title: 'Petikan 1: Berkelah di Pantai',
-            hyphenatedPassage: 'Pa-da ha-ri A-had, A-min dan ke-lu-ar-ga-nya per-gi ber-ke-lah. Ra-mai o-rang pa-da ha-ri i-tu. A-yah me-le-tak-kan ba-rang di ba-wah po-kok. A-min per-gi ber-e-nang, ma-na-ka-la ba-pa dan a-dik A-min ber-ma-in bo-la di te-pi pan-tai.\n\nTi-ba-ti-ba, A-min ter-de-ngar o-rang me-min-ta to-long. Su-a-ra i-tu de-kat de-ngan A-min. A-min li-hat se-o-rang bu-dak le-mas. A-min me-na-rik ta-ngan bu-dak i-tu dan ber-e-nang ke pan-tai.\n\nO-rang ra-mai di si-tu mem-ban-tu A-min meng-ang-kat bu-dak i-tu. Ba-pa bu-dak i-tu ber-te-ri-ma ka-sih ke-pa-da A-min. A-min sa-ngat gem-bi-ra ke-ra-na da-pat me-no-long o-rang.',
+            hyphenatedPassage: 'Pa-da ha-ri A-had, A-min dan ke-lu-ar-ga-nya per-gi ber-ke-lah. Ra-mai o-rang pa-da ha-ri i-tu. A-yah me-le-tak-kan ba-rang di ba-wah po-kok. A-min per-gi ber-e-nang, ma-na-ka-la ba-pa dan a-dik A-min ber-ma-in bo-la di te-pi pan-tai.\n\nTi-ba--ti-ba, A-min ter-de-ngar o-rang me-min-ta to-long. Su-a-ra i-tu de-kat de-ngan A-min. A-min li-hat se-o-rang bu-dak le-mas. A-min me-na-rik ta-ngan bu-dak i-tu dan ber-e-nang ke pan-tai.\n\nO-rang ra-mai di si-tu mem-ban-tu A-min meng-ang-kat bu-dak i-tu. Ba-pa bu-dak i-tu ber-te-ri-ma ka-sih ke-pa-da A-min. A-min sa-ngat gem-bi-ra ke-ra-na da-pat me-no-long o-rang.',
             emoji: '🏖️',
             questions: [
                 {
@@ -780,7 +793,7 @@
         },
         {
             title: 'Petikan 2: Pulang ke Dusun Datuk',
-            hyphenatedPassage: 'Pa-da ming-gu le-pas, Sa-ni dan ke-lu-ar-ga-nya pu-lang ke kam-pung. Sa-ni meng-i-kut da-tuk-nya per-gi ke du-sun. Ke-ti-ka i-tu mu-sim bu-ah-bu-ah-an. A-da ba-nyak po-kok bu-ah-bu-ah-an.\n\nSa-ni mem-ban-tu da-tuk-nya me-mu-ngut bu-ah du-ri-an. Se-le-pas i-tu, da-tuk Sa-ni meng-a-it bu-ah ram-bu-tan dan mang-gis. Sa-ni ma-kan se-pu-luh u-las du-ri-an dan ti-ga bi-ji bu-ah ram-bu-tan.\n\nU-da-ra di du-sun nya-man dan se-gar. Sa-ni ber-a-sa se-ro-nok dan gem-bi-ra ber-a-da di kam-pung da-tuk-nya.',
+            hyphenatedPassage: 'Pa-da ming-gu le-pas, Sa-ni dan ke-lu-ar-ga-nya pu-lang ke kam-pung. Sa-ni meng-i-kut da-tuk-nya per-gi ke du-sun. Ke-ti-ka i-tu mu-sim bu-ah--bu-ah-an. A-da ba-nyak po-kok bu-ah--bu-ah-an.\n\nSa-ni mem-ban-tu da-tuk-nya me-mu-ngut bu-ah du-ri-an. Se-le-pas i-tu, da-tuk Sa-ni meng-a-it bu-ah ram-bu-tan dan mang-gis. Sa-ni ma-kan se-pu-luh u-las du-ri-an dan ti-ga bi-ji bu-ah ram-bu-tan.\n\nU-da-ra di du-sun nya-man dan se-gar. Sa-ni ber-a-sa se-ro-nok dan gem-bi-ra ber-a-da di kam-pung da-tuk-nya.',
             emoji: '🌳',
             questions: [
                 {
@@ -789,7 +802,7 @@
                     correct: 0
                 },
                 {
-                    q: 'A-pa-kah po-kok bu-ah-bu-ah-an yang a-da di du-sun da-tuk?',
+                    q: 'A-pa-kah po-kok bu-ah--bu-ah-an yang a-da di du-sun da-tuk?',
                     options: ['Po-kok du-ri-an, ram-bu-tan dan mang-gis', 'Po-kok e-pal dan o-ren', 'Po-kok pi-sang sa-ha-ja'],
                     correct: 0
                 },
@@ -803,19 +816,30 @@
     ];
 
     function stripHyphens(text) {
-        return text ? text.replace(/-/g, '') : '';
+        if (!text) return '';
+        return text.replace(/--/g, ' ~ ').replace(/-/g, '').replace(/ ~ /g, '-');
     }
 
-    /* Menterjemah Teks Sengkang Kepada HTML Berwarna Suku Kata */
-    function renderColoredHyphenatedText(text) {
-        if (!text) return '';
-        const words = text.split(' ');
+    function renderColoredHyphenatedText(hyphenatedText) {
+        if (!hyphenatedText) return '';
         const colors = ['syl-c1', 'syl-c2', 'syl-c3', 'syl-c4'];
-        
+        const words = hyphenatedText.split(' ');
+
         return words.map(word => {
-            // Pengendalian khas kata ganda bersengkang seperti Ti-ba-ti-ba atau bu-ah-bu-ah-an
-            if (word.includes('-')) {
-                // Memadankan kelompok suku kata berturutan dan sebarang tanda baca di hujung
+            if (word.includes('--')) {
+                let parts = word.split('--');
+                let coloredParts = parts.map(part => {
+                    let match = part.match(/^([a-zA-Z\u00C0-\u024F\-]+)(.*)$/);
+                    if (match) {
+                        let sylls = match[1].split('-');
+                        let punct = match[2];
+                        let coloredSylls = sylls.map((syl, idx) => `<span class="${colors[idx % colors.length]}">${syl}</span>`).join('');
+                        return coloredSylls + punct;
+                    }
+                    return part;
+                });
+                return coloredParts.join('-');
+            } else if (word.includes('-')) {
                 let match = word.match(/^([a-zA-Z\u00C0-\u024F\-]+)(.*)$/);
                 if (match) {
                     let sylls = match[1].split('-');
@@ -828,15 +852,21 @@
         }).join(' ');
     }
 
-    /* Menghentikan Sebarang Pembacaan Audio */
     function stopAllAudio() {
-        isReadingPassage = false;
-        passageSentences = [];
-        passageSentenceIndex = 0;
-        
+        isPlayingPassage = false;
+        currentPassageList = [];
+        currentPassageIdx = 0;
+
+        if (passageTimer) {
+            clearTimeout(passageTimer);
+            passageTimer = null;
+        }
+
         try {
-            passageAudioPlayer.pause();
-            passageAudioPlayer.currentTime = 0;
+            passageAudio.pause();
+            passageAudio.currentTime = 0;
+            passageAudio.onended = null;
+            passageAudio.onerror = null;
         } catch(e) {}
 
         try {
@@ -849,13 +879,21 @@
         }
     }
 
-    /* Mengaktifkan Audio Context & Engine */
+    function initAudioContext() {
+        if (!audioCtx) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                audioCtx = new AudioContextClass();
+            }
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
     function unlockAudioEngine() {
         if (!isAudioUnlocked) {
             initAudioContext();
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.resume();
             }
@@ -865,99 +903,86 @@
     document.addEventListener('click', unlockAudioEngine, { passive: true });
     document.addEventListener('touchstart', unlockAudioEngine, { passive: true });
 
-    /* ENJIN PEMBACAAN PETIKAN PENUH KEMAHIRAN 9 */
-    passageAudioPlayer.onended = function() {
-        if (!isReadingPassage) return;
-        if (passageSentenceIndex < passageSentences.length) {
-            playCurrentPassageSentence();
-        } else {
-            isReadingPassage = false;
-        }
-    };
-
-    passageAudioPlayer.onerror = function() {
-        if (!isReadingPassage) return;
-        setTimeout(() => {
-            if (isReadingPassage) {
-                if (passageSentenceIndex < passageSentences.length) {
-                    playCurrentPassageSentence();
-                } else {
-                    isReadingPassage = false;
-                }
-            }
-        }, 300);
-    };
-
-    function playLongPassage(fullHyphenatedText) {
-        if (!fullHyphenatedText) return;
-        unlockAudioEngine();
+    /* ENJIN PEMBACAAN PETIKAN PEMAHAMAN PENUH KEMAHIRAN 9 */
+    function playLongPassage(hyphenatedText) {
         stopAllAudio();
+        unlockAudioEngine();
 
-        // 1. Bersihkan sengkang dan tukar garisan perenggan kepada noktah
-        let plainText = stripHyphens(fullHyphenatedText).replace(/\n+/g, '. ');
+        let plainText = stripHyphens(hyphenatedText);
+        let sentences = plainText.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 0);
 
-        // 2. Potong petikan mengikut ayat ringkas
-        let rawSentences = plainText.split(/(?<=[.!?])\s+/);
-        passageSentences = [];
+        if (sentences.length === 0) return;
 
-        rawSentences.forEach(s => {
-            let trimmed = s.trim();
-            if (trimmed.length > 0) {
-                // Jika ada ayat lebih daripada 85 aksara, potong mengikut koma supaya Google TTS stabil
-                if (trimmed.length > 85) {
-                    let parts = trimmed.split(/(?<=[,;])\s+/);
-                    parts.forEach(p => {
-                        if (p.trim().length > 0) passageSentences.push(p.trim());
-                    });
-                } else {
-                    passageSentences.push(trimmed);
-                }
-            }
-        });
+        currentPassageList = sentences;
+        currentPassageIdx = 0;
+        isPlayingPassage = true;
 
-        if (passageSentences.length === 0) return;
-
-        passageSentenceIndex = 0;
-        isReadingPassage = true;
-
-        playCurrentPassageSentence();
+        playSentenceAtIndex(0);
     }
 
-    function playCurrentPassageSentence() {
-        if (!isReadingPassage || passageSentenceIndex >= passageSentences.length) {
-            isReadingPassage = false;
+    function playSentenceAtIndex(index) {
+        if (!isPlayingPassage || index >= currentPassageList.length) {
+            isPlayingPassage = false;
             return;
         }
 
-        let sentence = passageSentences[passageSentenceIndex];
-        passageSentenceIndex++;
+        currentPassageIdx = index;
+        let text = currentPassageList[index];
 
-        let encoded = encodeURIComponent(sentence);
-        let onlineUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ms&q=${encoded}`;
+        let encoded = encodeURIComponent(text);
+        let url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ms&q=${encoded}`;
 
-        passageAudioPlayer.src = onlineUrl;
-        passageAudioPlayer.playbackRate = 0.88;
+        passageAudio.pause();
+        passageAudio.src = url;
+        passageAudio.currentTime = 0;
 
-        let p = passageAudioPlayer.play();
-        if (p !== undefined) {
-            p.catch(err => {
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    let utt = new SpeechSynthesisUtterance(sentence);
-                    utt.lang = 'ms-MY';
-                    utt.rate = 0.85;
-                    utt.onend = function() {
-                        if (isReadingPassage) playCurrentPassageSentence();
-                    };
-                    utt.onerror = function() {
-                        if (isReadingPassage) playCurrentPassageSentence();
-                    };
-                    window.speechSynthesis.speak(utt);
-                } else {
-                    setTimeout(() => {
-                        if (isReadingPassage) playCurrentPassageSentence();
-                    }, 400);
-                }
+        let hasCalledNext = false;
+        function nextSentence() {
+            if (hasCalledNext) return;
+            hasCalledNext = true;
+            if (passageTimer) {
+                clearTimeout(passageTimer);
+                passageTimer = null;
+            }
+
+            if (isPlayingPassage) {
+                setTimeout(() => {
+                    if (isPlayingPassage) {
+                        playSentenceAtIndex(index + 1);
+                    }
+                }, 250);
+            }
+        }
+
+        passageAudio.onended = nextSentence;
+
+        passageAudio.onerror = function() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.resume();
+                window.speechSynthesis.cancel();
+                let utt = new SpeechSynthesisUtterance(text);
+                utt.lang = 'ms-MY';
+                utt.rate = 0.85;
+                utt.onend = nextSentence;
+                utt.onerror = nextSentence;
+                window.speechSynthesis.speak(utt);
+            } else {
+                nextSentence();
+            }
+        };
+
+        let estimatedDuration = Math.max(3500, text.length * 150 + 2000);
+        if (passageTimer) clearTimeout(passageTimer);
+        passageTimer = setTimeout(() => {
+            if (!hasCalledNext && isPlayingPassage) {
+                nextSentence();
+            }
+        }, estimatedDuration);
+
+        let playPromise = passageAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(err => {
+                passageAudio.onerror();
             });
         }
     }
@@ -1025,18 +1050,6 @@
     }
 
     /* Web Audio Sound FX */
-    function initAudioContext() {
-        if (!audioCtx) {
-            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-            if (AudioContextClass) {
-                audioCtx = new AudioContextClass();
-            }
-        }
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
-
     function playBeep(type) {
         initAudioContext();
         if (!audioCtx) return;
