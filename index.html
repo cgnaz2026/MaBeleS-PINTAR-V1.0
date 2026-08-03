@@ -1124,26 +1124,14 @@ header {
         function getMalayVoice() {
             if (!('speechSynthesis' in window)) return null;
 
-            if (cachedVoices.length === 0) {
-                cachedVoices = window.speechSynthesis.getVoices();
-            }
+            const voices = window.speechSynthesis.getVoices() || [];
+            cachedVoices = voices;
 
-            // Utamakan suara Bahasa Melayu Malaysia.
-            let v = cachedVoices.find(
-                voice => voice.lang &&
-                voice.lang.toLowerCase() === 'ms-my'
-            );
+            // WAJIB: Bahasa Melayu Malaysia sahaja. Utamakan suara wanita.
+            const msMY = voices.filter(v => (v.lang || "").toLowerCase() === "ms-my");
+            const femaleNames = /yasmin|female|woman|siti|melayu.*wanita|malay.*female/i;
 
-            // Jika tiada, gunakan mana-mana suara Bahasa Melayu.
-            if (!v) {
-                v = cachedVoices.find(
-                    voice => voice.lang &&
-                    voice.lang.toLowerCase().startsWith('ms-')
-                );
-            }
-
-            // Jangan gunakan suara Indonesia/English sebagai fallback.
-            return v || null;
+            return msMY.find(v => femaleNames.test(v.name || "")) || msMY[0] || null;
         }
 
         function stopAudio() {
@@ -1281,8 +1269,69 @@ header {
             playNextSentence();
         }
 
-        /* Enjin Audio Utama */
-        function toggleSpeak(text, buttonEl, rate = 0.85, pitch = 1.1) {
+        /* Enjin Audio Utama - Web Speech Bahasa Melayu Malaysia */
+        function speakSentenceQueue(sentences, rate = 0.82, pitch = 1.08) {
+            let index = 0;
+
+            function playNextSentence() {
+                if (!isSpeakingState || index >= sentences.length) {
+                    stopAudio();
+                    return;
+                }
+
+                const sentence = sentences[index].trim();
+                if (!sentence) { index++; playNextSentence(); return; }
+
+                if (!('speechSynthesis' in window)) {
+                    isSpeakingState = false;
+                    resetActiveSpeakerBtn();
+                    return;
+                }
+
+                const utterance = new SpeechSynthesisUtterance(sentence);
+                const voice = getMalayVoice();
+
+                // Jangan benarkan English/Indonesia.
+                if (!voice) {
+                    isSpeakingState = false;
+                    resetActiveSpeakerBtn();
+                    console.warn("Suara Bahasa Melayu Malaysia (ms-MY) tidak tersedia pada pelayar ini.");
+                    return;
+                }
+
+                utterance.voice = voice;
+                utterance.lang = "ms-MY";
+                utterance.rate = rate;
+                utterance.pitch = pitch;
+                utterance.volume = 1;
+
+                utterance.onend = () => {
+                    index++;
+                    if (isSpeakingState) setTimeout(playNextSentence, 120);
+                };
+
+                utterance.onerror = () => {
+                    index++;
+                    if (isSpeakingState) setTimeout(playNextSentence, 120);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Chrome kadang-kadang belum memuatkan senarai suara ketika klik pertama.
+            const voices = window.speechSynthesis.getVoices();
+            if (!voices.length) {
+                const oldHandler = window.speechSynthesis.onvoiceschanged;
+                window.speechSynthesis.onvoiceschanged = () => {
+                    window.speechSynthesis.onvoiceschanged = oldHandler;
+                    playNextSentence();
+                };
+            } else {
+                playNextSentence();
+            }
+        }
+
+        function toggleSpeak(text, buttonEl, rate = 0.82, pitch = 1.08) {
             initAudioEngine();
 
             if (activeSpeakerBtn === buttonEl && isSpeakingState) {
@@ -1296,19 +1345,16 @@ header {
             const cleanText = text.trim();
             if (!cleanText) return;
 
-            // Pecahkan petikan kepada ayat-ayat berasingan
             let sentences = cleanText
                 .replace(/([.!?])\s+/g, "$1|")
                 .split("|")
                 .map(s => s.trim())
                 .filter(Boolean);
 
-            if (sentences.length === 0) sentences = [cleanText];
+            if (!sentences.length) sentences = [cleanText];
 
             isSpeakingState = true;
             if (buttonEl) setSpeakerPlaying(buttonEl);
-
-            // Mainkan audio hanya selepas URL TTS ditetapkan dalam speakSentenceQueue()
             speakSentenceQueue(sentences, rate, pitch);
         }
 
