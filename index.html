@@ -673,29 +673,24 @@ header {
     }
 
     function getBestMalayVoice() {
-if (!cachedVoices || cachedVoices.length === 0) loadVoices();
+    if (!cachedVoices || cachedVoices.length === 0) {
+        loadVoices();
+    }
 
-```
-// Utamakan suara Bahasa Melayu Malaysia
-const malayMalaysia = cachedVoices.find(v =>
-    v.lang && v.lang.toLowerCase() === 'ms-my'
-);
+    // Cari suara Bahasa Melayu Malaysia sahaja
+    const malayVoices = cachedVoices.filter(v => {
+        const lang = (v.lang || '').toLowerCase();
+        return lang === 'ms-my' || lang === 'ms_my';
+    });
 
-if (malayMalaysia) return malayMalaysia;
+    // Jika ada suara ms-MY, gunakan suara tersebut
+    if (malayVoices.length > 0) {
+        return malayVoices[0];
+    }
 
-// Jika tiada ms-MY, cari suara Bahasa Melayu
-const malayVoice = cachedVoices.find(v =>
-    v.lang && v.lang.toLowerCase().startsWith('ms')
-);
-
-if (malayVoice) return malayVoice;
-
-// Jangan gunakan suara Indonesia
-return null;
-```
-
+    // Jangan sekali-kali gunakan suara Indonesia
+    return null;
 }
-
 
     // Rantaian Audio Bagi Petikan Pemahaman Modul 9
     let currentPassageList = [];
