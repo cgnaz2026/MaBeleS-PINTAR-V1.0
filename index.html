@@ -1178,9 +1178,45 @@ header {
             } catch(e) {}
         }
 
-        /* Enjin Suara Bahasa Melayu Malaysia — Google TTS sahaja
-           Tiada fallback SpeechSynthesis supaya suara pelayar (Indonesia/English)
-           tidak mengambil alih audio MaBeLeS PINTAR di GitHub Pages. */
+        /* Enjin Suara Bahasa Melayu Malaysia — Google TTS + sandaran suara ms-MY
+           Penting: jangan sekali-kali guna suara id-ID atau en-US. */
+        function findMalayFemaleVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices() || [];
+            cachedVoices = voices;
+
+            const msVoices = voices.filter(v => {
+                const lang = (v.lang || '').toLowerCase();
+                const name = (v.name || '').toLowerCase();
+                return lang === 'ms-my' || lang.startsWith('ms-') || name.includes('malay') || name.includes('melayu');
+            });
+
+            // Utamakan Yasmin (Microsoft) jika terdapat pada komputer/pelayar.
+            return msVoices.find(v => /yasmin/i.test(v.name)) ||
+                   msVoices.find(v => /female|wanita|perempuan/i.test(v.name)) ||
+                   msVoices[0] || null;
+        }
+
+        function speakWithBrowserMalay(text, rate = 0.85, pitch = 1.05) {
+            return new Promise((resolve, reject) => {
+                if (!('speechSynthesis' in window)) { reject(); return; }
+
+                const voice = findMalayFemaleVoice();
+                if (!voice) { reject(); return; }
+
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = voice.lang || 'ms-MY';
+                u.voice = voice;
+                u.rate = rate;
+                u.pitch = pitch;
+                u.volume = 1;
+                u.onend = resolve;
+                u.onerror = reject;
+                window.speechSynthesis.speak(u);
+            });
+        }
+
         function speakSentenceQueue(sentences, rate = 0.85, pitch = 1.1) {
             let index = 0;
 
@@ -1197,33 +1233,39 @@ header {
                     return;
                 }
 
-                // Google TTS: kod ms = Bahasa Melayu.
-                // ttsspeed mengawal kelajuan tanpa menggunakan suara browser.
-                const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ms&client=tw-ob&ttsspeed=${Math.max(0.5, Math.min(1.2, rate))}&q=${encodeURIComponent(sentence)}`;
+                // Cuba Google TTS Bahasa Melayu Malaysia dahulu.
+                const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ms-MY&client=tw-ob&q=${encodeURIComponent(sentence)}`;
 
                 globalAudioPlayer.pause();
                 globalAudioPlayer.currentTime = 0;
                 globalAudioPlayer.src = ttsUrl;
 
+                let usedFallback = false;
+                const useFallback = () => {
+                    if (usedFallback || !isSpeakingState) return;
+                    usedFallback = true;
+                    globalAudioPlayer.pause();
+
+                    // Sandaran hanya suara Bahasa Melayu.
+                    speakWithBrowserMalay(sentence, rate, pitch).then(() => {
+                        index++;
+                        if (isSpeakingState) setTimeout(playNextSentence, 80);
+                    }).catch(() => {
+                        isSpeakingState = false;
+                        resetActiveSpeakerBtn();
+                        showToast('Suara Melayu tidak tersedia pada pelayar ini. Pasang suara Bahasa Melayu (ms-MY) untuk audio.');
+                    });
+                };
+
                 globalAudioPlayer.onended = () => {
                     index++;
-                    if (isSpeakingState) setTimeout(playNextSentence, 120);
+                    if (isSpeakingState) setTimeout(playNextSentence, 80);
                 };
 
-                globalAudioPlayer.onerror = () => {
-                    // PENTING: jangan jatuh ke SpeechSynthesis kerana Chrome/Windows
-                    // boleh memilih suara English atau Indonesia.
-                    isSpeakingState = false;
-                    resetActiveSpeakerBtn();
-                    showToast('Audio Bahasa Melayu tidak dapat dimuatkan. Cuba tekan 🔊 semula.');
-                };
+                globalAudioPlayer.onerror = useFallback;
 
                 const playPromise = globalAudioPlayer.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        if (globalAudioPlayer.onerror) globalAudioPlayer.onerror();
-                    });
-                }
+                if (playPromise !== undefined) playPromise.catch(useFallback);
             }
 
             playNextSentence();
