@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-<meta charset="UTF-8">
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE_KEY"></script>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MaBeleS PINTAR - Modul Bacaan Interaktif</title>
     <!-- Google Fonts: Andika & Fredoka -->
@@ -1122,8 +1123,28 @@ header {
         }
 
         function getMalayVoice() {
-            // Tidak digunakan. Audio utama menggunakan Google TTS Bahasa Melayu (ms).
-            return null;
+            if (!('speechSynthesis' in window)) return null;
+
+            if (cachedVoices.length === 0) {
+                cachedVoices = window.speechSynthesis.getVoices();
+            }
+
+            // Utamakan suara Bahasa Melayu Malaysia.
+            let v = cachedVoices.find(
+                voice => voice.lang &&
+                voice.lang.toLowerCase() === 'ms-my'
+            );
+
+            // Jika tiada, gunakan mana-mana suara Bahasa Melayu.
+            if (!v) {
+                v = cachedVoices.find(
+                    voice => voice.lang &&
+                    voice.lang.toLowerCase().startsWith('ms-')
+                );
+            }
+
+            // JANGAN gunakan suara Indonesia atau English sebagai fallback.
+            return v || null;
         }
 
         function stopAudio() {
@@ -1178,122 +1199,70 @@ header {
             } catch(e) {}
         }
 
-        /* ============================================================
-           ENJIN AUDIO MABeLeS PINTAR — BAHASA MELAYU
-           Versi ini TIDAK menggunakan speechSynthesis pelayar.
-           Audio bacaan dipanggil terus daripada Google Translate TTS
-           dengan kod bahasa ms (Bahasa Melayu), jadi ia tidak memilih
-           suara id-ID atau suara English yang dipasang pada komputer.
-           ============================================================ */
+        /* ENJIN AUDIO MP3 LUAR TALIAN - MaBeLeS PINTAR */
+        const localAudioMap = {"A5":"audio/c40e0e23516f1d6a.mp3","Abang berjalan kaki ke sekolah.":"audio/1596893db0439005.mp3","Buah limau itu sangat masam.":"audio/12d7096f9473e29d.mp3","C5":"audio/fbeff7287bb8d465.mp3","D5":"audio/d5183bf933292863.mp3","Dani dan adiknya pergi memancing ikan.":"audio/58a94ffa81797680.mp3","Datuk dan nenek tinggal di kampung.":"audio/ef4b849acdff03ea.mp3","Di rumah Anis ada kolam renang.":"audio/81a94a47bc905eec.mp3","E5":"audio/9a86054ee3627014.mp3","F5":"audio/b5cbd3434bd59610.mp3","G5":"audio/75cc572d557c39d3.mp3","Murid-murid beratur ketika membeli makanan di kantin.":"audio/cbddc02ce67c5957.mp3","Pada hari Ahad, Amin dan adiknya bersiar-siar di tepi pantai. Tiba-tiba, mereka terdengar suara orang meminta tolong. Seorang kanak-kanak hampir lemas di laut. Bapa Amin dengan pantas terjun ke dalam air dan menyelamatkan kanak-kanak itu. Kanak-kanak itu mengucapkan terima kasih kepada bapa Amin.":"audio/97811ef79256fd8b.mp3","Pada minggu lepas, Sani dan keluarganya pulang ke kampung. Sani mengikut datuknya pergi ke dusun. Ketika itu musim buah-buahan. Sani membantu datuknya memungut buah durian. Selepas itu, datuk Sani mengait buah rambutan dan manggis. Sani makan sepuluh ulas durian dan tiga biji buah rambutan. Udara di dusun nyaman dan segar. Sani berasa seronok dan gembira berada di kampung datuknya.":"audio/f9c8bbac551e4ea6.mp3","REST":"audio/cbaaa18133a5ea57.mp3","Salmi menolong ibunya menanam pokok bunga.":"audio/0f18ad32b5cfc126.mp3","a":"audio/86f7e437faa5a7fc.mp3","abjadsubarea":"audio/9c50d508581f335a.mp3","active":"audio/2bb6b986c5d6fb26.mp3","ah":"audio/fd0aa93434507bb3.mp3","an":"audio/de73eac0c305038f.mp3","andika":"audio/ed707f833673d415.mp3","api":"audio/a033a528b603fed4.mp3","ar":"audio/23d8e0156062165c.mp3","au":"audio/f095160c09b366f6.mp3","ayam":"audio/3ef22dfeb4ec0aa9.mp3","b":"audio/e9d71f5ee7c92d6d.mp3","ba":"audio/6c0596b8ac609191.mp3","bal":"audio/5c9d88feeb398a3b.mp3","baldi":"audio/35bb88ac2ec01007.mp3","ban":"audio/2580d49ff4060824.mp3","bang":"audio/0ab79927a592f172.mp3","basikal":"audio/02a64c77ccf94861.mp3","bateri":"audio/1b989a82f8ed2b0e.mp3","be":"audio/986b1bc1eb8de896.mp3","belalang":"audio/dc5732452637ed04.mp3","ber":"audio/0fd22dadf1824f86.mp3","besar":"audio/8d51689c937a9bc9.mp3","bi":"audio/aab9b7bd17003da2.mp3","bing":"audio/ccc9d04961e5acc3.mp3","bo":"audio/dc45fe023482b3b8.mp3","bola":"audio/2ddb786aae2a2ad6.mp3","bu":"audio/6721d9fb11ca730b.mp3","buaya":"audio/edbbe6c8f143a1d4.mp3","bump":"audio/ca067828db296cce.mp3","bunga":"audio/67cd361a6370a5ec.mp3","c":"audio/84a516841ba77a5b.mp3","ca":"audio/1c42c72cf95aa1b7.mp3","cap":"audio/ac4be5ac63e1ea62.mp3","cardmodal":"audio/179e9623249cbbf2.mp3","ci":"audio/5a4fe08359c7f973.mp3","cing":"audio/4d19a3b0a229cb0b.mp3","click":"audio/b93ec56608fb302f.mp3","correct":"audio/3179a65eff2523bb.mp3","cu":"audio/93c30b1a3b78a6ce.mp3","d":"audio/3c363836cf4e1666.mp3","da":"audio/cdd4f874095045f4.mp3","dai":"audio/5da94e1089740ddd.mp3","dan":"audio/2591e5f46f28d303.mp3","dang":"audio/7c160e8c60410b4d.mp3","daun":"audio/2f2532227433d3d8.mp3","de":"audio/600ccd1b71569232.mp3","den":"audio/0e1ddfe761f44f29.mp3","di":"audio/f502e82c25bba5a0.mp3","dik":"audio/691eba59f495cf24.mp3","div":"audio/26021f1f4700496d.mp3","dram":"audio/b87e5f603d4e13d3.mp3","du":"audio/fa114377ef35b25e.mp3","duit":"audio/5546f0b817fd3364.mp3","e":"audio/58e6b3a414a1e090.mp3","e pepet":"audio/670d3e3d4baa8f24.mp3","e taling":"audio/0d9fdb8700cce21b.mp3","enam":"audio/8892efd561e6b3b8.mp3","epal":"audio/dd8587c27ea6d721.mp3","f":"audio/4a0a19218e082a34.mp3","fa":"audio/215a956168f77421.mp3","fah":"audio/ceb664d4be0fde0b.mp3","fredoka":"audio/fa6ec6071265d8cd.mp3","g":"audio/54fd1711209fb1c0.mp3","ga":"audio/72b6ef474440c547.mp3","gal":"audio/03ec648cb18edbb5.mp3","gar":"audio/70bc8d63ca5a1ec5.mp3","gem":"audio/f2185b784faf72b8.mp3","gi":"audio/fc7794c8c4e6955e.mp3","gis":"audio/f2c2d174313876aa.mp3","gong":"audio/370f8692e4e25f0f.mp3","gu":"audio/81dbcb9162b442af.mp3","guli":"audio/494b9f3a14afdf4f.mp3","gung":"audio/ed4961d671eb2d2c.mp3","h":"audio/27d5482eebd075de.mp3","ha":"audio/f9fc27b9374ad1e3.mp3","had":"audio/85d72cb875cd70c0.mp3","hadiah":"audio/5276ea8b04f54bf6.mp3","ham":"audio/78844960f3ebdb07.mp3","harimau":"audio/3c0364fe3a9c5b88.mp3","hi":"audio/c22b5f9178342609.mp3","hu":"audio/06b08b32563194c5.mp3","i":"audio/042dc4512fa3d391.mp3","ih":"audio/f2fc9e17c5ccf2f8.mp3","ikan":"audio/4ce45e891fe33d41.mp3","ir":"audio/aa1553beed5d8173.mp3","it":"audio/6c5522ca8af86fc5.mp3","j":"audio/5c2dd944dde9e088.mp3","ja":"audio/84572ef2253ef81e.mp3","jagung":"audio/74c2e63d95f064df.mp3","jam":"audio/da3dd5c2657fecad.mp3","ji":"audio/5bc56a2873ad8cef.mp3","ju":"audio/a7ae639ea556171c.mp3","jun":"audio/5bbdd777cd7332b1.mp3","k":"audio/13fbd79c3d390e5d.mp3","ka":"audio/d312cc75dc28ced7.mp3","kai":"audio/31ea678c44dc4e8e.mp3","kal":"audio/99d807f598538f31.mp3","kam":"audio/c90abe8432366ece.mp3","kambing":"audio/420f3f8b0f6f8a91.mp3","kan":"audio/6769db84adc092af.mp3","kap":"audio/592c9f89cf2cf49b.mp3","kasut":"audio/c0b5d9d71334cd8e.mp3","ke":"audio/15d5e1d3b948fd59.mp3","kecil":"audio/aab8705decaadf1f.mp3","kedai":"audio/382630cd10946845.mp3","kek":"audio/5116c28e651a1901.mp3","kelapa":"audio/88c095d20d35297b.mp3","kemeja":"audio/31561aa35868f90d.mp3","ken":"audio/470bc578162732ac.mp3","kentang":"audio/9d9be11c72bb3c06.mp3","kereta":"audio/13a43711736ba209.mp3","kerusi":"audio/3c931672043ee842.mp3","ketam":"audio/f799e83b73c39a78.mp3","khe":"audio/b2ee40a9571b3863.mp3","khemah":"audio/8ceb772a764fca6b.mp3","ki":"audio/81d211101ecc428c.mp3","kli":"audio/712507b69edd1d51.mp3","klinik":"audio/c8a87403bb77f24c.mp3","ko":"audio/65a7da8f45e5a2f3.mp3","kok":"audio/3b4185eac11953b0.mp3","konsonan":"audio/a5c927eb244db0c0.mp3","kra":"audio/70b7770596310ce9.mp3","krayon":"audio/55bc316796e01f61.mp3","ku":"audio/78fa1053807e92ee.mp3","kucing":"audio/9cafb1d6240635d5.mp3","kuih":"audio/30c8e5fe304da878.mp3","kuk":"audio/07775b21f5801f70.mp3","kun":"audio/475371c36d2739e1.mp3","kunci":"audio/0f30bc52371799ca.mp3","kut":"audio/843f604affa2edef.mp3","l":"audio/07c342be6e560e7f.mp3","la":"audio/3efd4c0fe185135d.mp3","lah":"audio/147598962fdefbfb.mp3","lam":"audio/1280b208e59e5b33.mp3","lan":"audio/3ed79aa6d5c36a10.mp3","lang":"audio/7a2f85497548f3db.mp3","las":"audio/5db3d4f1d6b4d177.mp3","le":"audio/593b743b207e10ff.mp3","li":"audio/41db30f8022117ed.mp3","limau":"audio/8885686b5bc21e9c.mp3","ling":"audio/3275142b880fd39f.mp3","listdiftong":"audio/68264d2acbfdc0ad.mp3","listdigraf":"audio/f0221f9f6c32fd6f.mp3","listkvk":"audio/ce992cc306620ca2.mp3","listkvkk":"audio/c78c2f152414fef8.mp3","long":"audio/bd3027fa569ea15c.mp3","lu":"audio/3f76228c99e5664d.mp3","luh":"audio/14e8a03e851ec878.mp3","lung":"audio/633871c426696906.mp3","lur":"audio/251e3b8664fbda36.mp3","m":"audio/6b0d31c0d5632230.mp3","ma":"audio/1382244e1784be14.mp3","mah":"audio/990a75c805a00b7b.mp3","maincontent":"audio/0f2b8fb7202a734d.mp3","malaysia":"audio/9ae41083a849fb30.mp3","man":"audio/8175e3c8753aeb16.mp3","mang":"audio/9e9c77cd0d8d913f.mp3","mangga":"audio/6e2c710f734e7bba.mp3","manggis":"audio/4ff2803e8929091a.mp3","mangkuk":"audio/0beb7699bf7c3e82.mp3","mas":"audio/5f8992a5f5df2e39.mp3","mat":"audio/cc7c5be316e48d13.mp3","mata":"audio/347dc4b9869f8d27.mp3","mau":"audio/412850457e98a699.mp3","me":"audio/b1c1d8736f20db3f.mp3","meja":"audio/6517179f5573c8e6.mp3","mem":"audio/eccc4fdd5c655985.mp3","mi":"audio/9c51ad8660eaae45.mp3","min":"audio/b6c935d4f3c7b220.mp3","ming":"audio/b256bf5c5991b073.mp3","mo":"audio/6adbae8c894eee14.mp3","modalemoji":"audio/435d91d63ccbcbe1.mp3","modalsubtext":"audio/11fea5f513711245.mp3","monyet":"audio/bd9a17d487ffb608.mp3","mu":"audio/1247e024fd6d643a.mp3","muk":"audio/e97f909ec6fe3ae8.mp3","musicbtnicon":"audio/d3dd452788720316.mp3","musicbtntext":"audio/8a86e9b54720014e.mp3","musictoggle":"audio/250cbba2fcefd943.mp3","n":"audio/d1854cae891ec7b2.mp3","na":"audio/5efb4ac2212f109e.mp3","nak":"audio/1ef28ce342e3d763.mp3","nam":"audio/ce4004f150ebf406.mp3","nan":"audio/11e623a37e87cf79.mp3","nang":"audio/477fbd85909c79dc.mp3","ne":"audio/f60d2a2f7993d582.mp3","nek":"audio/698d17cb3ecc18d3.mp3","nga":"audio/05364c0625f27e6d.mp3","ngan":"audio/ef291860aeae67bc.mp3","ngat":"audio/0ddc24e0d1ccce22.mp3","ngi":"audio/155329a22b708389.mp3","ngu":"audio/b86943d46eb5a481.mp3","ngut":"audio/002627ece7682360.mp3","ni":"audio/c5f2aaa81dbf93ba.mp3","nik":"audio/9f210bbd62dc30b7.mp3","nis":"audio/fd8ea867ee0975a0.mp3","no":"audio/fd1286353570c570.mp3","nok":"audio/cb70df9914581044.mp3","none":"audio/71f8e7976e4cbc45.mp3","ny":"audio/5baeaa63b4f02b20.mp3","nya":"audio/5133f8338173fcde.mp3","nyamuk":"audio/8058f4494d99d0b9.mp3","nye":"audio/9a7d69532978fd04.mp3","nyet":"audio/0c515733b72813bc.mp3","nyu":"audio/1ef20c7bf83cc456.mp3","o":"audio/7a81af3e591ac713.mp3","oren":"audio/86e82526d0ff2908.mp3","p":"audio/516b9783fca517ee.mp3","pa":"audio/379fc0d5299a71ac.mp3","pan":"audio/bd2bd8216b9cb4aa.mp3","pang":"audio/a15f69189fdd3c0a.mp3","pantai":"audio/b4f31a9305165f71.mp3","pas":"audio/19c2a0dbd8e3a41b.mp3","pe":"audio/1db828bcd41de753.mp3","pem":"audio/a5aa1156bd6f5fa8.mp3","pembaris":"audio/e88ec5a9bfffa177.mp3","pen":"audio/31a841af7b2f7327.mp3","pensel":"audio/2a42c4f86fa47260.mp3","penyapu":"audio/b1a6516c7f4d36d9.mp3","penyu":"audio/ecc627bc781e41b6.mp3","per":"audio/8205aed0c460f4ec.mp3","pi":"audio/b02e5b66ace6dc3b.mp3","piano":"audio/5c07d1e47b9d6194.mp3","pir":"audio/608e940f88e4259f.mp3","pisang":"audio/22a35492f3893ad3.mp3","playing":"audio/5863973edc6707da.mp3","po":"audio/13a5d51391f6a6ff.mp3","pokok":"audio/545e2ee3edb6371b.mp3","pu":"audio/f03aa350a4cc1088.mp3","pung":"audio/adc3a905959e94d9.mp3","px":"audio/07a65dd6489a0029.mp3","q":"audio/22ea1c649c82946a.mp3","r":"audio/4dc7c9ec434ed065.mp3","ra":"audio/fb2b9eca64fdf068.mp3","ram":"audio/77c7960e890dedde.mp3","rambutan":"audio/6d146bb61becffbf.mp3","ran":"audio/24765b4c90fc2e23.mp3","rang":"audio/d7d0e4d685f1ae90.mp3","rantai":"audio/c3fbcd73e1c4d3d7.mp3","re":"audio/c387c982a132d05c.mp3","rest":"audio/27ad1672d8c97d74.mp3","ri":"audio/268013331b64ca4d.mp3","rid":"audio/a77018e21d77931d.mp3","ris":"audio/72d14d174b071664.mp3","ro":"audio/eed1903a65fb5137.mp3","ru":"audio/67b8b1c4fedb2e38.mp3","running":"audio/3c49d9cc3c0c8342.mp3","s":"audio/a0f1490a20d0211c.mp3","sa":"audio/3608a6d1a05aba23.mp3","sal":"audio/caf8dae1703b84f4.mp3","sam":"audio/f16bed56189e249f.mp3","sampan":"audio/487160cc56be9744.mp3","sang":"audio/ccc3a07b09bba04d.mp3","scoreboard":"audio/92e709e08688f7fc.mp3","se":"audio/00762ccfa703393e.mp3","sel":"audio/c7c752379a2f5bcc.mp3","seluar":"audio/18316c2a4f090e4c.mp3","senapang":"audio/db494ce7420361a7.mp3","show":"audio/9fb29051f2217270.mp3","si":"audio/7dd9b33881225c7a.mp3","sih":"audio/d29eb377296968a6.mp3","sim":"audio/813221ca5f14cb83.mp3","sine":"audio/3ceffe1ce290eba8.mp3","singa":"audio/17918b0c9e9be84f.mp3","sku":"audio/cf559ae3526e08d2.mp3","skuter":"audio/6129c0cef8039317.mp3","so":"audio/cd1b646ebd1f6844.mp3","sotong":"audio/73abc230361e7843.mp3","su":"audio/363eb224f6ff8d3c.mp3","sun":"audio/22fa6121da96f43a.mp3","suspended":"audio/74b1768b42d2fe6b.mp3","sut":"audio/cce8ade739e79551.mp3","syam":"audio/80d45e401e5f8437.mp3","syampu":"audio/cd03c1ceab5aa65a.mp3","syi":"audio/b5cabd42afeb34f9.mp3","syiling":"audio/e42bb14fd8fef75c.mp3","t":"audio/8efd86fb78a56a51.mp3","ta":"audio/00a6ba21da70f3e7.mp3","tai":"audio/ff155b80030ba65f.mp3","tam":"audio/5d418a47c3711bc3.mp3","tan":"audio/35ca8cf12ff7ebe9.mp3","tang":"audio/fed8e0354adeaf79.mp3","tangga":"audio/38bef08f2555f178.mp3","tanglung":"audio/766318331428d3dc.mp3","tas":"audio/6849a273c4502027.mp3","te":"audio/33e9505d12942e82.mp3","telur":"audio/9324c8d38503ba8b.mp3","tem":"audio/8ac2bd0a2b41da7d.mp3","tembikai":"audio/da1c60149cd2bbea.mp3","ter":"audio/f698fd37e11dcb13.mp3","ti":"audio/41c76e5218177bb9.mp3","tin":"audio/f269197686c56c43.mp3","ting":"audio/93544000a0e6c4dd.mp3","tingkap":"audio/03d9a104696c3c1d.mp3","to":"audio/4374aaee247fb237.mp3","toast":"audio/2d885aa81d3cfb04.mp3","tomato":"audio/321f6b7e8bf7f29a.mp3","tong":"audio/4a988ab1a5ca4e97.mp3","tor":"audio/a06ad5dbbfe4f53e.mp3","totalscore":"audio/1dd7549a212f34ad.mp3","touchstart":"audio/9ad882ce2dca6bb0.mp3","trak":"audio/83f178b94b9c5312.mp3","traktor":"audio/8cb972de07f252a7.mp3","triangle":"audio/b7d045ced8a819cb.mp3","tro":"audio/79fdb32ff09abfc3.mp3","troli":"audio/6ad4d3f3efc6c724.mp3","tu":"audio/a3da4c6307d230e1.mp3","tuk":"audio/c361e34a441700ca.mp3","tur":"audio/d9d91b78f76b9767.mp3","u":"audio/51e69892ab49df85.mp3","ubi":"audio/faf5c7dace8c76ea.mp3","udang":"audio/62bdc60067056133.mp3","un":"audio/dd3bc42b2cbba792.mp3","ut":"audio/e746699d3947443d.mp3","v":"audio/7a38d8cbd20d9932.mp3","vokal":"audio/99c7f517fbc95936.mp3","w":"audio/aff024fe4ab0fece.mp3","wrong":"audio/a4b48a81cdab1e1a.mp3","x":"audio/11f6ad8ec52a2984.mp3","y":"audio/95cb0bfd2977c761.mp3","ya":"audio/e92fc4e26a76b5e8.mp3","yon":"audio/6fb5132b17b8b4c1.mp3","z":"audio/395df8f7c51f0070.mp3","zi":"audio/1396bc8a5619af2d.mp3","zirafah":"audio/c74afaa4a25c950f.mp3"};
 
-        function speakSentenceQueue(sentences, rate = 0.85, pitch = 1.1) {
-            let index = 0;
-
-            function playNextSentence() {
-                if (!isSpeakingState || index >= sentences.length) {
-                    stopAudio();
-                    return;
-                }
-
-                const sentence = (sentences[index] || '').trim();
-                if (!sentence) {
-                    index++;
-                    playNextSentence();
-                    return;
-                }
-
-                // Kod 'ms' = Bahasa Melayu. Tiada pemilihan suara komputer.
-                const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ms&client=tw-ob&q=${encodeURIComponent(sentence)}`;
-
-                globalAudioPlayer.pause();
-                globalAudioPlayer.currentTime = 0;
-                globalAudioPlayer.src = ttsUrl;
-
-                let finished = false;
-                const fail = () => {
-                    if (finished || !isSpeakingState) return;
-                    finished = true;
-                    globalAudioPlayer.pause();
-                    isSpeakingState = false;
-                    resetActiveSpeakerBtn();
-                    showToast('Audio Bahasa Melayu gagal dimuatkan. Sila tekan 🔊 semula.');
-                };
-
-                globalAudioPlayer.onended = () => {
-                    if (finished) return;
-                    finished = true;
-                    index++;
-                    if (isSpeakingState) setTimeout(playNextSentence, 100);
-                };
-
-                globalAudioPlayer.onerror = fail;
-
-                const playPromise = globalAudioPlayer.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(fail);
-                }
+        function stopAudio() {
+            try { globalAudioPlayer.pause(); } catch(e) {}
+            globalAudioPlayer.onended = null;
+            globalAudioPlayer.onerror = null;
+            isSpeakingState = false;
+            if (activeSpeakerBtn) {
+                activeSpeakerBtn.classList.remove('is-playing');
+                activeSpeakerBtn = null;
             }
-
-            playNextSentence();
+            if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
         }
 
-        /* Enjin Audio Utama */
+        function playLocalSequence(parts, buttonEl) {
+            const queue = (parts || []).map(x => String(x).trim()).filter(Boolean);
+            if (!queue.length) return;
+            if (activeSpeakerBtn === buttonEl && isSpeakingState) { stopAudio(); return; }
+            stopAudio();
+            isSpeakingState = true;
+            activeSpeakerBtn = buttonEl || null;
+            if (buttonEl) buttonEl.classList.add('is-playing');
+            let i = 0;
+            const next = () => {
+                if (!isSpeakingState || i >= queue.length) { stopAudio(); return; }
+                const key = queue[i];
+                const src = localAudioMap[key] || localAudioMap[key.toLowerCase()];
+                if (!src) {
+                    i++;
+                    setTimeout(next, 40);
+                    return;
+                }
+                globalAudioPlayer.pause();
+                globalAudioPlayer.src = src;
+                globalAudioPlayer.onended = () => { i++; setTimeout(next, 80); };
+                globalAudioPlayer.onerror = () => { i++; setTimeout(next, 80); };
+                const p = globalAudioPlayer.play();
+                if (p && p.catch) p.catch(() => { i++; setTimeout(next, 80); });
+            };
+            next();
+        }
+
         function toggleSpeak(text, buttonEl, rate = 0.85, pitch = 1.1) {
             initAudioEngine();
-
-            if (activeSpeakerBtn === buttonEl && isSpeakingState) {
-                stopAudio();
-                return;
-            }
-
-            stopAudio();
-            if (!text) return;
-
-            const cleanText = String(text).trim();
-            if (!cleanText) return;
-
-            // Pecahkan petikan panjang kepada ayat pendek supaya TTS lebih stabil.
-            let sentences = cleanText
-                .replace(/([.!?])\s+/g, "$1|")
-                .split("|")
-                .map(s => s.trim())
-                .filter(Boolean);
-
-            if (sentences.length === 0) sentences = [cleanText];
-
-            isSpeakingState = true;
-            if (buttonEl) setSpeakerPlaying(buttonEl);
-            speakSentenceQueue(sentences, rate, pitch);
-        }
-
-        function spellSyllableWithPronunciation(syllable) {
-            if (!syllable) return '';
-            let clean = syllable.toLowerCase().replace(/[^a-z]/g, '');
-            if (clean.length <= 1) return clean;
-            let letters = clean.split('').join(' ');
-            return `${letters}, ${clean}`;
+            const clean = String(text || '').trim();
+            if (!clean) return;
+            // Ayat/petikan disimpan sebagai satu MP3 tempatan.
+            if (localAudioMap[clean]) { playLocalSequence([clean], buttonEl); return; }
+            // Jika teks mempunyai beberapa ayat, mainkan satu demi satu.
+            const parts = clean.split(/(?<=[.!?])\s+/).filter(Boolean);
+            playLocalSequence(parts, buttonEl);
         }
 
         function spellAndSpeakToggle(syllables, fullWord, buttonEl) {
-            let cleanSyllables = syllables
-                .map(s => s.toLowerCase().replace(/[^a-z]/g, ''))
-                .filter(s => s.length > 0);
-
-            let speechText = '';
-            
-            if (cleanSyllables.length === 1) {
-                speechText = spellSyllableWithPronunciation(cleanSyllables[0]);
-                if (fullWord && fullWord.toLowerCase() !== cleanSyllables[0]) {
-                    speechText += `, ${fullWord}`;
-                }
-            } else {
-                let spelledEachSyllable = cleanSyllables.map(s => spellSyllableWithPronunciation(s)).join(', ');
-                let combinedSyllables = cleanSyllables.join(', ');
-                speechText = `${spelledEachSyllable}, ${combinedSyllables}, ${fullWord}`;
-            }
-
-            speechText = speechText.replace(/\./g, '');
-            toggleSpeak(speechText, buttonEl, 0.8, 1.1);
+            const clean = (syllables || []).map(s => String(s).toLowerCase().replace(/[^a-z]/g,'')).filter(Boolean);
+            const queue = [];
+            clean.forEach(s => {
+                // Eja huruf satu demi satu, kemudian sebut suku kata.
+                s.split('').forEach(ch => queue.push(ch));
+                queue.push(s);
+            });
+            if (fullWord) queue.push(String(fullWord).toLowerCase());
+            playLocalSequence(queue, buttonEl);
         }
 
         function renderSyllableColored(syllables) {
@@ -1440,9 +1409,9 @@ header {
             const modalBtn = document.getElementById('modalSpeakerBtn');
             const speechText = `${item.letter}, ${item.word}`;
             openCardModal(item.emoji, item.letter, `${item.word} (${item.note})`, (btn) => {
-                toggleSpeak(speechText, btn, 0.8, 1.2);
+                playLocalSequence([item.letter.toLowerCase(), item.word.toLowerCase()], btn);
             });
-            toggleSpeak(speechText, modalBtn, 0.8, 1.2);
+            playLocalSequence([item.letter.toLowerCase(), item.word.toLowerCase()], modalBtn);
         }
 
         function triggerLetterModal(index, isUpper = false) {
@@ -2006,4 +1975,3 @@ header {
 </html>
 
 ```
-
